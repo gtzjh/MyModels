@@ -43,7 +43,7 @@ conda activate mymodels
 pip install -r requirements.txt
 ```
 
-### Use
+## Execute
 
 -> main.py
 
