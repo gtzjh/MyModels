@@ -2,6 +2,18 @@
 
 Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
+# Developing logs
+
+## 2024.06.09
+
+1. Found that the KernelExplainer can not calculate interaction values
+
+2. Finished the tree based model, and finished the test
+
+3. Plan to extract some same codes from each seperated .py file, and rebuild the whole `models` module.
+
+4. The optuna should accomadate the consistent parameters and pass it to the final best parameters set, but now they were all ignored.
+
 # Models
 
 1. Neural Network (Must use the `KernelExplainer`)
@@ -21,7 +33,7 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 ### Use conda (Recommended)
 
 ```bash
-conda create --name mymodels --file requirements.txt
+conda create -n mymodels --file requirements.txt
 conda activate mymodels
 ```
 
@@ -30,6 +42,10 @@ conda activate mymodels
 ```bash
 pip install -r requirements.txt
 ```
+
+### Use
+
+-> main.py
 
 # Upcomming
 
