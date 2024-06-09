@@ -1,11 +1,6 @@
-# import numpy as np
-# import pandas as pd
 from data.dataLoader import dataLoader
-from models.myRandomForest import RF
-from models.myCatBoost import CAT
-from models.myDecisionTree import DT
-# from models.myNeuralNetwork import NN
-from models.mySHAP import SHAP
+from SHAP import SHAP
+from models import ml
 
 
 
@@ -21,9 +16,13 @@ def main():
     )
 
     # Execute machine learning
-    model, params, accuracy = CAT(
+    model, params, accuracy = ml(
         x_train, x_test, y_train, y_test,
-        cv = 6, random_state = 42, trials = 10, results_dir = "results/CAT"
+        model = "dt",
+        cv = 6, 
+        random_state = 42, 
+        trials = 100, 
+        results_dir = "results/DT"
     )
     print(params)
     print(accuracy)
