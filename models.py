@@ -3,6 +3,7 @@ import pandas as pd
 import optuna
 from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
 from optuna.visualization import plot_optimization_history
@@ -18,7 +19,7 @@ from pathlib import Path
 # Decision Tree
 def DT(_x_train, _y_train, _cv, _trials, _random_state):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
-    def objective(trial):
+    def _objective(trial):
         param = {
             "max_depth": trial.suggest_int("max_depth", 2, 20),
             "min_samples_split": trial.suggest_int("min_samples_split", 2, 20),
@@ -38,13 +39,36 @@ def DT(_x_train, _y_train, _cv, _trials, _random_state):
 
     # Bayesian execution
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(objective, n_trials = _trials)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
 
 ###############################################################################
 # Random Forest
+def RF(_x_train, _y_train, _cv, _trials, _random_state):
+    cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
+    def _objective(trial):
+        param = {
+            "n_estimators": trial.suggest_int("n_estimators", 100, 3000, step = 100),
+            "max_depth": trial.suggest_int("max_depth", 1, 15),
+            "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 15),
+            "min_samples_split": trial.suggest_int("min_samples_split", 2, 15),
+        }
+        cv_r2 = cross_val_score(
+            RandomForestRegressor(**param), 
+            _x_train, _y_train, 
+            scoring = "r2",
+            cv = cv_obj,
+            n_jobs = -1,
+            verbose = 0,
+        )
+        return np.mean(cv_r2)
+
+    # Bayesian execution
+    _study = optuna.create_study(direction = "maximize")
+    _study.optimize(_objective, n_trials = _trials)
+    return _study
 ###############################################################################
 
 
@@ -52,7 +76,7 @@ def DT(_x_train, _y_train, _cv, _trials, _random_state):
 # Catboost
 def CAT(_x_train, _y_train, _cv, _trials, _random_state):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
-    def objective(trial):
+    def _objective(trial):
         param = {
             "silent": True,
             "iterations": trial.suggest_int("iterations", 100, 3000, step = 100),
@@ -78,7 +102,7 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state):
 
     # Bayesian execution
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(objective, n_trials = _trials)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
@@ -115,9 +139,15 @@ def ml(
             _trials = trials,              # How many trials to execute
             _random_state = random_state   # control the cross-validation split
         )
-        final_model = CatBoostRegressor    # Pass the object, but do not call the method
+        use_model = CatBoostRegressor      # Pass the object, but do not call the method
     elif model == "rf":
-        return None
+        study = RF(
+            _x_train = x_train, _y_train = y_train,
+            _cv = cv,
+            _trials = trials,
+            _random_state = random_state
+        )
+        use_model = RandomForestRegressor
     elif model == "dt":
         study = DT(
             _x_train = x_train, _y_train = y_train,
@@ -125,8 +155,9 @@ def ml(
             _trials = trials,
             _random_state = random_state
         )
-        final_model = DecisionTreeRegressor
+        use_model = DecisionTreeRegressor
     else:
+        print("Error in model selection.")
         return ValueError
     #######################################################
 
@@ -136,7 +167,7 @@ def ml(
     best_params = study.best_trial.params
     # Train a model base on the optimal parameters
     # On the whole train data.
-    best_model = final_model(**best_params)
+    best_model = use_model(**best_params)
     best_model.fit(x_train, y_train)
     y_pred = best_model.predict(x_test)
     accuracy = dict({

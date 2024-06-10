@@ -1,6 +1,7 @@
 from data.dataLoader import dataLoader
 from SHAP import SHAP
 from models import ml
+from time import time
 
 
 
@@ -18,11 +19,11 @@ def main():
     # Execute machine learning
     model, params, accuracy = ml(
         x_train, x_test, y_train, y_test,
-        model = "dt",
+        model = "rf",
         cv = 6, 
         random_state = 42, 
         trials = 100, 
-        results_dir = "results/DT"
+        results_dir = "results/RF"
     )
     print(params)
     print(accuracy)
@@ -40,4 +41,7 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.now()
     main()
+    end = time.now()
+    print("Elapse: ", (round(end-start)/3600, 2))
