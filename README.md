@@ -4,6 +4,11 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
 # Developing logs
 
+
+## 2024.06.09
+
+1. Added lightgbm
+
 ## 2024.06.09
 
 1. Found that the KernelExplainer can not calculate interaction values
@@ -53,11 +58,14 @@ pip install -r requirements.txt
 
 2. Adopt to the classification tasks.
 
+3. Support categorical features.
+
 # Attention
 
 **Please do not install ray for faster training (In the autogluon recommandation)**
 **Do not execute:**
 
 ```bash
-mamba install -c conda-forge "ray-tune >=2.6.3,<2.7" "ray-default >=2.6.3,<2.7"  # Do not install it
+# Do not install it
+mamba install -c conda-forge "ray-tune >=2.6.3,<2.7" "ray-default >=2.6.3,<2.7"
 ```

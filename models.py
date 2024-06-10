@@ -4,6 +4,7 @@ import optuna
 from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from lightgbm import LGBMRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
 from optuna.visualization import plot_optimization_history
@@ -12,6 +13,40 @@ from pathlib import Path
 
 ###############################################################################
 # LightGBM
+def LGB(_x_train, _y_train, _cv, _trials, _random_state):
+    cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
+    def _objective(trial):
+        param = {
+            "metric": "r2",
+            "n_jobs": trial.suggest_int("n_jobs", -1, -1),
+            "verbosity": trial.suggest_int("verbosity", -1, -1),
+            "random_state": trial.suggest_int("random_state", _random_state, _random_state),
+            "max_depth": trial.suggest_int("max_depth", 2, 30),
+            "learning_rate": trial.suggest_float("learning_rate", 1e-8, 1.0, log = True),
+            "n_estimators": trial.suggest_int("n_estimators", 200, 3000, step = 100),
+            "num_leaves": trial.suggest_int("num_leaves", 2, 256),
+            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.2, 1.0),
+            "subsample": trial.suggest_float("subsample", 0.2, 1.0),
+            "subsample_freq": trial.suggest_int("subsample_freq", 1, 7),
+            "reg_alpha": trial.suggest_float("reg_alpha", 1e-8, 10.0, log = True),
+            "reg_lambda": trial.suggest_float("reg_lambda", 1e-8, 10.0, log = True),
+        }
+
+        cv_r2 = cross_val_score(
+            LGBMRegressor(**param), 
+            _x_train, _y_train, 
+            scoring = "r2",
+            cv = cv_obj,
+            n_jobs = -1,
+            verbose = 0,
+        )
+        
+        return np.mean(cv_r2)
+    
+    # Bayesian execution
+    _study = optuna.create_study(direction = "maximize")
+    _study.optimize(_objective, n_trials = _trials)
+    return _study
 ###############################################################################
 
 
@@ -21,6 +56,7 @@ def DT(_x_train, _y_train, _cv, _trials, _random_state):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
     def _objective(trial):
         param = {
+            "random_state": trial.suggest_int("random_state", _random_state, _random_state),
             "max_depth": trial.suggest_int("max_depth", 2, 20),
             "min_samples_split": trial.suggest_int("min_samples_split", 2, 20),
             "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 20),
@@ -37,7 +73,6 @@ def DT(_x_train, _y_train, _cv, _trials, _random_state):
         )
         return np.mean(cv_r2)
 
-    # Bayesian execution
     _study = optuna.create_study(direction = "maximize")
     _study.optimize(_objective, n_trials = _trials)
     return _study
@@ -50,6 +85,7 @@ def RF(_x_train, _y_train, _cv, _trials, _random_state):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
     def _objective(trial):
         param = {
+            "random_state": trial.suggest_int("random_state", _random_state, _random_state),
             "n_estimators": trial.suggest_int("n_estimators", 100, 3000, step = 100),
             "max_depth": trial.suggest_int("max_depth", 1, 15),
             "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 15),
@@ -64,8 +100,7 @@ def RF(_x_train, _y_train, _cv, _trials, _random_state):
             verbose = 0,
         )
         return np.mean(cv_r2)
-
-    # Bayesian execution
+    
     _study = optuna.create_study(direction = "maximize")
     _study.optimize(_objective, n_trials = _trials)
     return _study
@@ -74,11 +109,12 @@ def RF(_x_train, _y_train, _cv, _trials, _random_state):
 
 ###############################################################################
 # Catboost
-def CAT(_x_train, _y_train, _cv, _trials, _random_state):
+def CAT(_x_train, _y_train, _cv, _trials, _random_state, _cat_features = None):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
     def _objective(trial):
         param = {
             "silent": True,
+            "random_state": trial.suggest_int("random_state", _random_state, _random_state),
             "iterations": trial.suggest_int("iterations", 100, 3000, step = 100),
             "learning_rate": trial.suggest_float("learning_rate", 1e-5, 1.0, log = True),
             "max_depth": trial.suggest_int("max_depth", 3, 10),
@@ -91,7 +127,7 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state):
         }
         
         cv_r2 = cross_val_score(
-            CatBoostRegressor(**param), 
+            CatBoostRegressor(**param, cat_features = _cat_features), 
             _x_train, _y_train, 
             scoring = "r2",
             cv = cv_obj,
@@ -100,7 +136,6 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state):
         )
         return np.mean(cv_r2)
 
-    # Bayesian execution
     _study = optuna.create_study(direction = "maximize")
     _study.optimize(_objective, n_trials = _trials)
     return _study
@@ -117,11 +152,11 @@ def ml(
         x_train, x_test, y_train, y_test,  # Input train and test data
         model,                             # Model selection
         cv = 6,                            # Cross-validation for 6 times
-        random_state = 42,                 # Random state is 42 Global
+        random_state = 6,                 # Global random state
         trials = 100,                      # Execute 100 times in optuna
         results_dir = "results/"           # The dir to store the optimization results
     ):
-    assert model == "cat" or model == "rf" or model == "dt"
+    assert model == "cat" or model == "rf" or model == "dt" or model == "lgb"
     
     #######################################################
     # Check wether the results dir is exist
@@ -137,7 +172,8 @@ def ml(
             _x_train = x_train, _y_train = y_train,
             _cv = cv,                      # Cross-validation
             _trials = trials,              # How many trials to execute
-            _random_state = random_state   # control the cross-validation split
+            _random_state = random_state,  # control the cross-validation split
+            _cat_feature = None
         )
         use_model = CatBoostRegressor      # Pass the object, but do not call the method
     elif model == "rf":
@@ -156,6 +192,14 @@ def ml(
             _random_state = random_state
         )
         use_model = DecisionTreeRegressor
+    elif model == "lgb":
+        study = LGB(
+            _x_train = x_train, _y_train = y_train,
+            _cv = cv,
+            _trials = trials,
+            _random_state = random_state
+        )
+        use_model = LGBMRegressor
     else:
         print("Error in model selection.")
         return ValueError

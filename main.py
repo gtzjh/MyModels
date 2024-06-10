@@ -18,15 +18,16 @@ def main():
 
     # Execute machine learning
     model, params, accuracy = ml(
-        x_train, x_test, y_train, y_test,
-        model = "rf",
-        cv = 6, 
-        random_state = 42, 
-        trials = 100, 
-        results_dir = "results/RF"
+        x_train, x_test, y_train, y_test,  # Load data set.
+        model = "lgb",                     # Model selection: "lgb", "cat", "rf", "dt".
+        cv = 6,                            # Cross validation in optuna hyperparameters turning.
+        random_state = 6,                  # Global random state control, for model training, cross validation turning, and testing.
+        trials = 100,                       # How many trials to execute in optuna hyperparameters turning.
+        results_dir = "results/LGB"        # In which the optimazation results storing in.
     )
     print(params)
     print(accuracy)
+
 
     # SHAP explanation
     shap_data, shap_values, interaction = SHAP(
@@ -36,12 +37,12 @@ def main():
     print(shap_data)    # Data set used in SHAP
     print(shap_values)  # Local explanation
     print(interaction)  # Interaction
-
+    
     return None
 
 
 if __name__ == "__main__":
-    start = time.now()
+    start = time()
     main()
-    end = time.now()
-    print("Elapse: ", (round(end-start)/3600, 2))
+    end = time()
+    print("Elapse: %f hours.".format(round((end-start)/3600, 2)))
