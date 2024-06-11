@@ -77,13 +77,6 @@ mamba install -c conda-forge "ray-tune >=2.6.3,<2.7" "ray-default >=2.6.3,<2.7"
 
 # Logs
 
-## 2024.06.10
-
-1. Added `n_jobs = -1` to `optuna.study.optimize()` function, this adjustion speed up the turning especially the Random Forest.
-   
-   *About 80% cpu usage in turning before and 100% after adjustion.*
-
-
 ## 2024.06.09
 
 1. Added lightgbm

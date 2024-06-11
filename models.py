@@ -45,7 +45,7 @@ def LGB(_x_train, _y_train, _cv, _trials, _random_state):
     
     # Bayesian execution
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(_objective, n_trials = _trials, n_jobs = -1)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
@@ -74,7 +74,7 @@ def DT(_x_train, _y_train, _cv, _trials, _random_state):
         return np.mean(cv_r2)
 
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(_objective, n_trials = _trials, n_jobs = -1)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
@@ -102,7 +102,7 @@ def RF(_x_train, _y_train, _cv, _trials, _random_state):
         return np.mean(cv_r2)
     
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(_objective, n_trials = _trials, n_jobs = -1)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
@@ -137,7 +137,7 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state, _cat_features = None):
         return np.mean(cv_r2)
 
     _study = optuna.create_study(direction = "maximize")
-    _study.optimize(_objective, n_trials = _trials, n_jobs = -1)
+    _study.optimize(_objective, n_trials = _trials)
     return _study
 ###############################################################################
 
@@ -152,7 +152,7 @@ def ml(
         x_train, x_test, y_train, y_test,  # Input train and test data
         model,                             # Model selection
         cv = 6,                            # Cross-validation for 6 times
-        random_state = 6,                 # Global random state
+        random_state = 6,                  # Global setting
         trials = 100,                      # Execute 100 times in optuna
         results_dir = "results/"           # The dir to store the optimization results
     ):
