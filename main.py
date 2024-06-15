@@ -22,7 +22,7 @@ def main():
         model = "rf",                      # Model selection: "lgb", "cat", "rf", "dt".
         cv = 6,                            # Cross validation in optuna hyperparameters turning.
         random_state = 6,                  # Global random state control, for model training, cross validation turning, and testing.
-        trials = 100,                      # How many trials to execute in optuna hyperparameters turning.
+        trials = 10,                      # How many trials to execute in optuna hyperparameters turning.
         results_dir = "results/RF"         # In which the optimazation results storing in.
     )
     print(params)

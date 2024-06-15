@@ -10,6 +10,7 @@ from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
 from pathlib import Path
+import os
 
 
 ###############################################################################
@@ -237,7 +238,7 @@ def ml(
     # Check wether the results dir is exist
     results_dir = Path(results_dir)
     if results_dir.exists() == False:
-        results_dir.mkdir()
+        os.makedirs(str(results_dir))
     #######################################################
 
     #######################################################

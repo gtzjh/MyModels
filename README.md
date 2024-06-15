@@ -4,7 +4,7 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
 **DO REMEMBER:**
 
-[George E. P. Box: ](https://en.wikipedia.org/wiki/George_E._P._Box) **All models are wrong, but some are useful.** 
+[**All models are wrong, but some are useful.**](https://en.wikipedia.org/wiki/George_E._P._Box)
 
 # Models
 
@@ -22,60 +22,60 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
 # Usage
 
-## 1. Prepare python environments
-
 - Platform: 
-  - Windows 10 64-bit or later. (Tested on Windows 11 professional 64-bit)
+  - Windows 10 64-bit or later. (Tested on Windows 11)
   - Linux (Tested on Ubuntu 22.04)
 
 - Python version: 3.10.x
 
-*About 9 GiB storage would be used.*
+*About 1.6 GiB storage would be used.*
 
-### 1.1 Use conda (Recommended)
+## 1. Prepare environment
+
+conda (**Recommended**)
+
+*On Windows*
 
 ```bash
-conda create -n mymodels -f requirements.txt -c conda-forge -y  # Install packages
-conda activate mymodels                                         # Activate environment
+conda create -n mymodels -f windows.txt -c conda-forge -y
 ```
 
-### 1.2 Use pip
+*Replace `windows.txt` to `linux.txt` on linux platform.*
 
 ```bash
-pip install -r requirements.txt
+conda activate mymodels
+```
+
+pip
+
+```bash
+pip install -r windows.txt  # The same replacement to above.
 ```
 
 ## 2. Execute
 
-In bash:
-
-```bash
-cd MyModels     # Entry the work dir
-python main.py  # Execute
-```
-
-
 # To-do
 
-- [x] Support categorical features (Recommend: CatBoost).
+- [x] Support categorical features (CatBoost is Recommended).
+
+- [x] Test on Linux (64-bit)
+
+- [ ] Test on MacOS (Apple M1 silicon or later).
 
 - [ ] GPU acceleration for training, testing, and SHAP.
 
 - [ ] Adopt to the classification tasks.
 
-- [ ] Test on Linux (64-bit), MacOS (Apple M1 silicon or later).
-
-# Attention
-
-**Please do not install ray for faster training (In the autogluon recommandation)**
-
-**Do not execute:**
-
-```bash
-mamba install -c conda-forge "ray-tune >=2.6.3,<2.7" "ray-default >=2.6.3,<2.7"
-```
 
 # Logs
+
+## 2024.06.15
+
+1. Remove Autogluon.
+
+2. Modify NN module.
+
+3. Tested on linux (WSL, Ubuntu 22.04)
 
 ## 2024.06.09
 
@@ -83,13 +83,13 @@ mamba install -c conda-forge "ray-tune >=2.6.3,<2.7" "ray-default >=2.6.3,<2.7"
 
 ## 2024.06.09
 
-1. Found that the KernelExplainer can not calculate interaction values
+1. Found that the KernelExplainer can not calculate interaction values.
 
-2. Finished the tree based model, and finished the test
+2. Finished the tree based model, and finished the test.
 
 3. Plan to extract some same codes from each seperated .py file, and rebuild the whole `models` module.
 
 4. The optuna should accomadate the consistent parameters and pass it to the final best parameters set, but now they were all ignored.
 
 
-Powered [gtzjh](https://github.com/gtzjh). All rights reserved.
+*Created by [Junhong](https://github.com/gtzjh). All rights reserved.*
