@@ -2,22 +2,30 @@ import numpy as np
 import pandas as pd
 from data.dataLoader import dataLoader
 from SHAP import SHAP
-from models import ml
+from models import ml, AG, NN
 from time import time
 
 
-
-"""
-Do not execute NN explainer now, some error occur.
-"""
 def main():
+    ###########################################################################
     # Data preparing
     x_train, x_test, y_train, y_test = dataLoader(
         file_path = "data/data.csv",
         y_index = 0, 
         x_index_list = range(1, 16)
     )
+    ###########################################################################
 
+    ###########################################################################
+    # Execue Autogluon for pre-test
+    AG(
+        x_train, x_test, y_train, y_test,
+        y_label = "y",
+        train_time = 60*2  # 2 hours by default
+    )
+    ###########################################################################
+
+    ###########################################################################
     # Execute machine learning
     model, params, accuracy = ml(
         x_train, x_test, y_train, y_test,  # Load data set.
@@ -29,8 +37,9 @@ def main():
     )
     print(params)
     print(accuracy)
+    ###########################################################################
 
-
+    ###########################################################################
     # SHAP explanation
     # Sample the data set
     np.random.seed(6)  # Use the random state for consistent results
@@ -49,12 +58,10 @@ def main():
     print(shap_data)    # Data set used in SHAP
     print(shap_values)  # Local explanation
     print(interaction)  # Interaction
+    ###########################################################################
     
     return None
 
 
 if __name__ == "__main__":
-    start = time()
     main()
-    end = time()
-    print("Elapse: %f hours.".format(round((end-start)/3600, 2)))

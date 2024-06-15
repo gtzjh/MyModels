@@ -35,14 +35,14 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 ### 1.1 Use conda (Recommended)
 
 ```bash
-~$ conda create -n mymodels --file requirements.txt  # Install packages
-~$ conda activate mymodels  # Activate environment
+conda create -n mymodels -f requirements.txt  # Install packages
+conda activate mymodels                           # Activate environment
 ```
 
 ### 1.2 Use pip
 
 ```bash
-~$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## 2. Execute
@@ -50,8 +50,8 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 Execute in bash:
 
 ```bash
-(mymodels) ~$ cd MyModels  # Entry the work dir
-(mymodels) ~/MyModels python main.py  # Execute
+cd MyModels     # Entry the work dir
+python main.py  # Execute
 ```
 
 

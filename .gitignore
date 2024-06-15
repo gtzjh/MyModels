@@ -1,6 +1,7 @@
 # Self defined
 catboost_info/
 .DS_Store
+AutogluonModels/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

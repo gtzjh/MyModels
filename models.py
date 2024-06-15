@@ -1,14 +1,121 @@
 import numpy as np
 import pandas as pd
+from autogluon.tabular import TabularPredictor
 import optuna
 from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from lightgbm import LGBMRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
 from optuna.visualization import plot_optimization_history
 from pathlib import Path
+
+
+###############################################################################
+# Neural Network (MLP)
+def NN(
+        x_train, x_test, y_train, y_test,   # Input train and test data
+        cv = 6,                             # Cross-validation for 6 times
+        random_state = 42,                  # Random state is 42
+        trials = 100,                       # Execute 100 times in optuna
+        results_dir = "results/NN"          # The dir to store the optimization results
+    ):
+
+    # Check wether the results dir is exist
+    results_dir = Path(results_dir)
+    if results_dir.exists() == False:
+        results_dir.mkdir()
+
+    # 6 Kfold for cross-validation
+    cv_obj = KFold(n_splits = cv, shuffle = True, random_state = random_state)
+    def objective(trial):
+        param = {
+            "hidden_layer_sizes": (100, 100, 100),
+            "max_iter": 1000,
+            "early_stopping": True,
+            "alpha": trial.suggest_float("alpha", 1e-5, 1e-1, log=True),
+            "learning_rate_init": trial.suggest_float("learning_rate_init", 1e-5, 1e-1, log=True),
+        }
+        preditor = MLPRegressor(**param)
+        cv_r2 = cross_val_score(
+            preditor, 
+            x_train, y_train, 
+            scoring = "r2",
+            cv = cv_obj,
+            n_jobs = -1,
+            verbose = 0,
+        )
+        return np.mean(cv_r2)
+
+    # Bayesian
+    study = optuna.create_study(direction = "maximize")
+    study.optimize(objective, n_trials = trials)
+
+    # 将每次 trial 的验证精度（objective value and best value）保存
+    fig_obj = plot_optimization_history(study)
+    opt_history_df = pd.DataFrame(
+        data = {
+            "current_accuracy": np.array(fig_obj.data[0]["y"]),
+            "best_accuracy": np.array(fig_obj.data[1]["y"])
+        },
+        index = pd.Series(data = np.array(fig_obj.data[0]["x"]), name = "trials")
+    )
+    opt_history_df.to_csv(results_dir.joinpath("optimization.csv"), encoding = "utf-8")
+
+    # 返回最优的trial和参数组合
+    trial = study.best_trial
+    best_params = trial.params
+    best_params.update({
+        "hidden_layer_sizes": (100, 100, 100),
+        "max_iter": 1000,
+        "early_stopping": True,
+    })
+
+    # Train a model base upon the optimal parameters on the whole train data.
+    best_model = MLPRegressor(**best_params)
+    best_model.fit(x_train, y_train)
+    y_pred = best_model.predict(x_test)
+    accuracy = dict({
+        "R2": r2_score(y_test, y_pred),
+        "RMSE": root_mean_squared_error(y_test, y_pred),
+        "MAE": mean_absolute_error(y_test, y_pred),
+        "MAPE": mean_absolute_percentage_error(y_test, y_pred)
+    })
+
+    return (best_model, best_params, accuracy)
+###############################################################################
+
+
+###############################################################################
+def AG(
+        x_train, x_test, y_train, y_test, 
+        y_label, 
+        train_time = 60*60*2  # About 2 hours
+    ):
+    train_data = pd.concat([y_train, x_train], axis = 1)
+    test_data = pd.concat([y_test, x_test], axis = 1)
+
+    predictor = TabularPredictor(
+        label = y_label,
+        eval_metric = "r2",
+        verbosity = 1
+    )
+    predictor.fit(
+        train_data = train_data,
+        time_limit = train_time,
+        presets = "best_quality"
+    )
+    eva = dict(predictor.evaluate(test_data))  # Test the model
+    print({
+        "R2": round(eva["r2"], 6),
+        "MAE": -round(eva["mean_absolute_error"], 6),
+        "RMSE": -round(eva["root_mean_squared_error"], 6)
+    })
+
+    return None
+###############################################################################
 
 
 ###############################################################################
