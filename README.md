@@ -37,7 +37,7 @@ conda (**Recommended**)
 *On Windows*
 
 ```bash
-conda create -n mymodels -f windows.txt -c conda-forge -y
+conda create --name mymodels --file windows.txt -c conda-forge -y
 ```
 
 *Replace `windows.txt` to `linux.txt` on linux platform.*
