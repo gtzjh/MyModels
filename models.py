@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from autogluon.tabular import TabularPredictor
 import optuna
+from optuna.visualization import plot_optimization_history
 from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
@@ -9,7 +9,6 @@ from lightgbm import LGBMRegressor
 from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
-from optuna.visualization import plot_optimization_history
 from pathlib import Path
 
 
@@ -86,37 +85,6 @@ def NN(
 
     return (best_model, best_params, accuracy)
 ###############################################################################
-
-
-###############################################################################
-def AG(
-        x_train, x_test, y_train, y_test, 
-        y_label, 
-        train_time = 60*60*2  # About 2 hours
-    ):
-    train_data = pd.concat([y_train, x_train], axis = 1)
-    test_data = pd.concat([y_test, x_test], axis = 1)
-
-    predictor = TabularPredictor(
-        label = y_label,
-        eval_metric = "r2",
-        verbosity = 1
-    )
-    predictor.fit(
-        train_data = train_data,
-        time_limit = train_time,
-        presets = "best_quality"
-    )
-    eva = dict(predictor.evaluate(test_data))  # Test the model
-    print({
-        "R2": round(eva["r2"], 6),
-        "MAE": -round(eva["mean_absolute_error"], 6),
-        "RMSE": -round(eva["root_mean_squared_error"], 6)
-    })
-
-    return None
-###############################################################################
-
 
 ###############################################################################
 # LightGBM

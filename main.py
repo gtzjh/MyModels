@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from data.dataLoader import dataLoader
 from SHAP import SHAP
-from models import ml, AG, NN
+from models import ml, NN
 from time import time
 
 
@@ -13,15 +13,6 @@ def main():
         file_path = "data/data.csv",
         y_index = 0, 
         x_index_list = range(1, 16)
-    )
-    ###########################################################################
-
-    ###########################################################################
-    # Execue Autogluon for pre-test
-    AG(
-        x_train, x_test, y_train, y_test,
-        y_label = "y",
-        train_time = 60*2  # 2 hours by default
     )
     ###########################################################################
 
