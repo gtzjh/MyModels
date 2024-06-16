@@ -24,11 +24,11 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
 - Platform: 
   - Windows 10 64-bit or later. (Tested on Windows 11)
-  - Linux (Tested on Ubuntu 22.04)
+  - Linux (Tested on Ubuntu 22.04 WSL2)
 
 - Python version: 3.10.x
 
-*About 1.6 GiB storage would be used.*
+*About 1.75 GiB storage would be used.*
 
 ## 1. Prepare environment
 
@@ -60,8 +60,6 @@ pip install -r windows.txt  # The same replacement to above.
 
 - [x] Test on Linux (64-bit)
 
-- [ ] Test on MacOS (Apple M1 silicon or later).
-
 - [ ] GPU acceleration for training, testing, and SHAP.
 
 - [ ] Adopt to the classification tasks.
@@ -75,7 +73,7 @@ pip install -r windows.txt  # The same replacement to above.
 
 2. Modify NN module.
 
-3. Tested on linux (WSL, Ubuntu 22.04)
+3. Tested on linux (Ubuntu 22.04, WSL2)
 
 ## 2024.06.09
 
