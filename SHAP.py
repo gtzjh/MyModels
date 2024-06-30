@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import shap
+from pathlib import Path
 
 
 """
@@ -8,7 +9,7 @@ Parameters:
   1. model used for SHAP explaination
   2. data used for SHAP calculation
 """
-def SHAP(shap_model, shap_data, explainer = "tree"):
+def SHAP(shap_model, shap_data, results_dir, explainer = "tree"):
     assert isinstance(shap_data, pd.DataFrame)
     assert explainer == "tree" or explainer == "kernel"
     if explainer == "tree":
@@ -62,6 +63,12 @@ def SHAP(shap_model, shap_data, explainer = "tree"):
     shap_values = pd.DataFrame(shap_values_dict)
     ###########################################################################
 
+
+    ###########################################################################
+    shap_data.to_csv(Path(results_dir).joinpath("shap_data.csv"), encoding = "utf-8", index = False)
+    shap_values.to_csv(Path(results_dir).joinpath("shap_values.csv"), encoding = "utf-8", index = False)
+    interaction.to_csv(Path(results_dir).joinpath("shap_interaction.csv"), encoding = "utf-8", index = False)
+    ###########################################################################
 
     return (
         shap_data,    # Data set used for calculating SHAP.

@@ -2,7 +2,15 @@ import numpy as np
 import pandas as pd
 from data.dataLoader import dataLoader
 from SHAP import SHAP
-from models import ml, NN
+from models import ml
+
+
+model = "rf"                # Model selection: "lgb", "cat", "rf", "dt".
+cross_valid = 6             # Cross validation in optuna hyperparameters turning.
+random_state = 6            # Global random state control, for model training, cross validation turning, and testing.
+results_dir = "results/RF"  # Where the results will be store in.
+trials = 30                 # How many trials to execute in optuna hyperparameters turning.
+shap_ratio = 0.01           # Use 1% of the whole dataset for SHAP calculation.
 
 
 def main():
@@ -17,37 +25,31 @@ def main():
 
     ###########################################################################
     # Execute machine learning
-    model, params, accuracy = ml(
+    best_model = ml(
         x_train, x_test, y_train, y_test,  # Load data set.
-        model = "rf",                      # Model selection: "lgb", "cat", "rf", "dt".
-        cv = 6,                            # Cross validation in optuna hyperparameters turning.
-        random_state = 6,                  # Global random state control, for model training, cross validation turning, and testing.
-        trials = 10,                       # How many trials to execute in optuna hyperparameters turning.
-        results_dir = "results/RF"         # In which the optimazation results storing in.
+        model = model,
+        cv = cross_valid, 
+        random_state = random_state,
+        trials = trials,
+        results_dir = results_dir
     )
-    print(params)
-    print(accuracy)
     ###########################################################################
 
     ###########################################################################
     # SHAP explanation
     # Sample the data set
-    np.random.seed(6)  # Use the random state for consistent results
+    np.random.seed(random_state)  # Use the random state for consistent results
     all_data = pd.concat([x_train, x_test])
     shap_data = all_data.loc[
         np.random.choice(
             all_data.index, 
-            int(len(all_data) * 0.1),  # Use 10% of the whole dataset for SHAP calculation.
+            int(len(all_data) * shap_ratio),
             replace = False
         )]
 
-    _, shap_values, interaction = SHAP(
-        model, shap_data, explainer = "tree"
+    _, _shap_values, _interaction = SHAP(
+        best_model, shap_data, results_dir, explainer = "tree"
     )
-
-    print(shap_data)    # Data set used in SHAP
-    print(shap_values)  # Local explanation
-    print(interaction)  # Interaction
     ###########################################################################
     
     return None

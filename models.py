@@ -6,13 +6,14 @@ from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from lightgbm import LGBMRegressor
-from sklearn.neural_network import MLPRegressor
+# from sklearn.neural_network import MLPRegressor
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.model_selection import cross_val_score, KFold
 from pathlib import Path
-import os
+import os, yaml
 
 
+"""
 ###############################################################################
 # Neural Network (MLP)
 def NN(
@@ -86,6 +87,8 @@ def NN(
 
     return (best_model, best_params, accuracy)
 ###############################################################################
+"""
+
 
 ###############################################################################
 # LightGBM
@@ -219,11 +222,6 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state, _cat_features = None):
 
 
 
-###############################################################################
-"""
-1. Input data.
-2. store the optimazation and accuracy results
-"""
 def ml(
         x_train, x_test, y_train, y_test,  # Input train and test data
         model,                             # Model selection
@@ -282,23 +280,6 @@ def ml(
     #######################################################
 
 
-    ########################################################
-    # Return the best trial and parameters
-    best_params = study.best_trial.params
-    # Train a model base on the optimal parameters
-    # On the whole train data.
-    best_model = use_model(**best_params)
-    best_model.fit(x_train, y_train)
-    y_pred = best_model.predict(x_test)
-    accuracy = dict({
-        "R2": r2_score(y_test, y_pred),
-        "RMSE": root_mean_squared_error(y_test, y_pred),
-        "MAE": mean_absolute_error(y_test, y_pred),
-        "MAPE": mean_absolute_percentage_error(y_test, y_pred)
-    })
-    ########################################################
-
-
     #######################################################
     # Save objective value and best value in every trial
     fig_obj = plot_optimization_history(study)
@@ -318,6 +299,66 @@ def ml(
     )
     #######################################################
 
-    # Output the best model, parameters, and accuracy.
-    return (best_model, best_params, accuracy)
-###############################################################################
+
+    ########################################################
+    # Return the best trial and parameters
+    best_params = study.best_trial.params
+    print(best_params)
+    with open(results_dir.joinpath("params.yml"), 'w', encoding = "utf-8") as file:
+        yaml.dump(best_params, file)
+    
+
+    # Train a model base on the optimal parameters
+    # On the whole train data.
+    best_model = use_model(**best_params)
+    best_model.fit(x_train, y_train)
+
+    #-------------------------------------------------------
+    # Accuracy on test set
+    y_pred = best_model.predict(x_test)
+    test_accuracy = dict({
+        "R2": float(r2_score(y_test, y_pred)),
+        "RMSE": float(root_mean_squared_error(y_test, y_pred)),
+        "MAE": float(mean_absolute_error(y_test, y_pred)),
+        "MAPE": float(mean_absolute_percentage_error(y_test, y_pred))
+    })
+    scatter_test = pd.DataFrame(data = {
+        "y_test": y_test,
+        "y_pred": y_pred
+    })
+    scatter_test.to_csv(
+        results_dir.joinpath("scatter_test.csv"),
+        encoding = "utf-8", index = False
+    )
+    print(test_accuracy)
+    #-------------------------------------------------------
+
+    #-------------------------------------------------------
+    # Accuracy on training set
+    y_train_pred = best_model.predict(x_train)
+    train_accuracy = dict({
+        "R2": float(r2_score(y_train, y_train_pred)),
+        "RMSE": float(root_mean_squared_error(y_train, y_train_pred)),
+        "MAE": float(mean_absolute_error(y_train, y_train_pred)),
+        "MAPE": float(mean_absolute_percentage_error(y_train, y_train_pred))
+    })
+    scatter_train = pd.DataFrame(data = {
+        "y_train": y_train,
+        "y_train_pred": y_train_pred
+    })
+    scatter_train.to_csv(
+        results_dir.joinpath("scatter_train.csv"),
+        encoding = "utf-8", index = False
+    )
+    print(train_accuracy)
+    #-------------------------------------------------------
+
+    accuracy_dict = dict({
+        "test_accuracy": test_accuracy,
+        "train_accuracy": train_accuracy
+    })
+    with open(results_dir.joinpath("accuracy.yml"), 'w', encoding = "utf-8") as file:
+        yaml.dump(accuracy_dict, file)
+    ########################################################
+
+    return best_model
