@@ -1,21 +1,34 @@
 rm(list = ls())
 
 library(tidyverse)
+library(yaml)
 
 
 group_color <- c("test" = "#CD5C5C", "train" = "#4682B4")
-annotate_text <- "
-  Test:
-    R2      :   0.70
-    RMSE: 89.66
-    MAE  : 45.36
-  Train:
-    R2      :   0.80
-    RMSE: 65.96
-    MAE  : 35.08
-"
 
-plot_scatter <- function(test_data_path, train_data_path){
+
+plot_scatter <- function(test_data_path, train_data_path, accuracy_path){
+  # ----------------------------------------------------------------------------
+  model_performance <- yaml.load_file(accuracy_path)
+  test_r2 <- model_performance$test_accuracy$R2
+  test_rmse <- model_performance$test_accuracy$RMSE
+  test_mae <- model_performance$test_accuracy$MAE
+  train_r2 <- model_performance$train_accuracy$R2
+  train_rmse <- model_performance$train_accuracy$RMSE
+  train_mae <- model_performance$train_accuracy$MAE
+  
+  annotate_text <- sprintf("
+    Test:
+      R2      :   %f
+      RMSE: %f
+      MAE  : %f
+    Train:
+      R2      :   %f
+      RMSE: %f
+      MAE  : %f
+  ", test_r2, test_rmse, test_mae, train_r2, train_rmse, train_mae)
+  # ----------------------------------------------------------------------------
+  
   # ----------------------------------------------------------------------------
   scatter_test <- read_csv(test_data_path, show_col_types = FALSE) %>%
     rename("actual" = "y_test", "pred" = "y_pred")
@@ -33,7 +46,6 @@ plot_scatter <- function(test_data_path, train_data_path){
     geom_abline(intercept = 0, slope = 1, color = "gray") +
     geom_point(alpha = 0.3, size = 5) +
     scale_color_manual(values = group_color) +
-    # xlim(1, 1600) + ylim(1, 1600) + 
     annotate("label",
              x = 50, y = 1600,
              label = annotate_text, 
