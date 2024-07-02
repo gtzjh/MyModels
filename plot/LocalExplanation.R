@@ -1,10 +1,3 @@
-rm(list = ls())
-
-
-library(tidyverse)
-library(patchwork)
-
-
 plot_local <- function(shap_data_path, shap_values_path){
   #-----------------------------------------------------------------------------
   shap_data <- read_csv(shap_data_path, show_col_types = FALSE)

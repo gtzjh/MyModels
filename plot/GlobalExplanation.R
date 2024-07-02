@@ -1,9 +1,3 @@
-rm(list = ls())
-
-
-library(tidyverse)
-
-
 plot_global <- function(global_explanation_path, color = "#6295A2"){
   # Read files and trans it to long dataframe.
   global_explanation <- read_csv(global_explanation_path, show_col_types = FALSE) %>%

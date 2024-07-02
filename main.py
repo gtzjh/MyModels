@@ -5,12 +5,12 @@ from SHAP import SHAP
 from models import ml
 
 
-model = "rf"                # Model selection: "lgb", "cat", "rf", "dt".
-cross_valid = 6             # Cross validation in optuna hyperparameters turning.
-random_state = 6            # Global random state control, for model training, cross validation turning, and testing.
-results_dir = "results/RF"  # Where the results will be store in.
-trials = 30                 # How many trials to execute in optuna hyperparameters turning.
-shap_ratio = 0.01           # Use 1% of the whole dataset for SHAP calculation.
+model = "cat"                # Model selection: "lgb", "cat", "rf", "dt".
+cross_valid = 6              # Cross validation in optuna hyperparameters turning.
+random_state = 6             # Global random state control, for model training, cross validation turning, and testing.
+results_dir = "results/CAT"  # Where the results will be store in.
+trials = 100                 # How many trials to execute in optuna hyperparameters turning.
+shap_ratio = 1               # Use 100% of the whole dataset for SHAP calculation.
 
 
 def main():
@@ -31,7 +31,8 @@ def main():
         cv = cross_valid, 
         random_state = random_state,
         trials = trials,
-        results_dir = results_dir
+        results_dir = results_dir,
+        cat_features = None
     )
     ###########################################################################
 

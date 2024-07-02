@@ -1,9 +1,3 @@
-rm(list = ls())
-
-library(tidyverse)
-library(yaml)
-
-
 group_color <- c("test" = "#CD5C5C", "train" = "#4682B4")
 
 

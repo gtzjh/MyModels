@@ -54,7 +54,7 @@ def NN(
     study = optuna.create_study(direction = "maximize")
     study.optimize(objective, n_trials = trials)
 
-    # 将每次 trial 的验证精度（objective value and best value）保存
+    # 将每次 trial 的验证精度 (objective value and best value) 保存
     fig_obj = plot_optimization_history(study)
     opt_history_df = pd.DataFrame(
         data = {
@@ -192,7 +192,7 @@ def CAT(_x_train, _y_train, _cv, _trials, _random_state, _cat_features = None):
     cv_obj = KFold(n_splits = _cv, shuffle = True, random_state = _random_state)
     def _objective(trial):
         param = {
-            "silent": True,
+            "verbose": trial.suggest_int("verbose", 0, 0),
             "random_state": trial.suggest_int("random_state", _random_state, _random_state),
             "iterations": trial.suggest_int("iterations", 100, 3000, step = 100),
             "learning_rate": trial.suggest_float("learning_rate", 1e-5, 1.0, log = True),
@@ -228,7 +228,8 @@ def ml(
         cv = 6,                            # Cross-validation for 6 times
         random_state = 6,                  # Global setting
         trials = 100,                      # Execute 100 times in optuna
-        results_dir = "results/"           # The dir to store the optimization results
+        results_dir = "results/",          # The dir to store the optimization results
+        cat_features = None
     ):
     assert model == "cat" or model == "rf" or model == "dt" or model == "lgb"
     
@@ -247,7 +248,7 @@ def ml(
             _cv = cv,                      # Cross-validation
             _trials = trials,              # How many trials to execute
             _random_state = random_state,  # control the cross-validation split
-            _cat_feature = None
+            _cat_features = cat_features   # Categories features
         )
         use_model = CatBoostRegressor      # Pass the object, but do not call the method
     elif model == "rf":

@@ -1,13 +1,3 @@
-# Plot the optimization curve usint Optuna
-rm(list = ls())
-
-library(tidyverse)
-# library(showtext)
-# showtext_opts(dpi = 500)
-# showtext_auto()
-# theme_set(theme_bw())
-
-
 plot_optimization <- function(optimization_file_path){
   optimization <- read_csv(optimization_file_path, show_col_types = FALSE)
 

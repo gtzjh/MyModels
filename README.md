@@ -53,7 +53,7 @@ pip install -r windows.txt  # The same replacement to above.
 
 # To-do
 
--   [x] Support categorical features (CatBoost is Recommended).
+-   [ ] Support categorical features (CatBoost is Recommended).
 
 -   [x] Test on Linux (64-bit)
 
@@ -64,6 +64,13 @@ pip install -r windows.txt  # The same replacement to above.
 -   [ ] Adopt to the classification tasks.
 
 # Logs
+
+
+## 2024.07.02
+
+1. Due to the initial parameters are randomly set, some warnings may occur when implement CatBoost. Just ignore it or repeat.
+
+2. The categorical features supporting must be rewriten.
 
 ## 2024.06.30
 
