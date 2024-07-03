@@ -1,10 +1,13 @@
 # MyModels
 
+[中文版本](中文使用说明.md)
+
+[English version](README.md)
+
 Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
-**DO REMEMBER:**
+**DO REMEMBER: All models are wrong, but some are useful.**
 
-[**All models are wrong, but some are useful.**](https://en.wikipedia.org/wiki/George_E._P._Box)
 
 # Models
 
@@ -23,7 +26,7 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 conda (**Recommended**)
 
 ``` bash
-conda create -n mymodels -f env.yml
+conda env create -f env.yml -n mymodels
 ```
 
 ``` bash
