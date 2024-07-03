@@ -9,8 +9,8 @@ model = "cat"                # Model selection: "lgb", "cat", "rf", "dt".
 cross_valid = 6              # Cross validation in optuna hyperparameters turning.
 random_state = 6             # Global random state control, for model training, cross validation turning, and testing.
 results_dir = "results/CAT"  # Where the results will be store in.
-trials = 100                 # How many trials to execute in optuna hyperparameters turning.
-shap_ratio = 1               # Use 100% of the whole dataset for SHAP calculation.
+trials = 30                  # How many trials to execute in optuna hyperparameters turning.
+shap_ratio = 0.05            # Use 100% of the whole dataset for SHAP calculation.
 
 
 def main():
@@ -39,7 +39,7 @@ def main():
     ###########################################################################
     # SHAP explanation
     # Sample the data set
-    np.random.seed(random_state)  # Use the random state for consistent results
+    np.random.seed(random_state)
     all_data = pd.concat([x_train, x_test])
     shap_data = all_data.loc[
         np.random.choice(

@@ -16,28 +16,15 @@ Store my machine learning and SHAP (SHapley Additive exPlanations) codes.
 
 4.  [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
-    (Must use the `KernelExplainer`)
-
-# Usage
-
--   Platform:
-    -   Windows 10 64-bit or later. (Tested on Windows 11)
-    -   Linux (Tested on Ubuntu 22.04 WSL2)
--   Python version: 3.10.x
-
 *About 1.75 GiB storage would be used.*
 
-## 1. Prepare environment
+## 1. Prepare environment (On Windows platform)
 
 conda (**Recommended**)
 
-*On Windows*
-
 ``` bash
-conda create --name mymodels --file windows.txt -c conda-forge -y
+conda create -n mymodels -f env.yml
 ```
-
-*Replace `windows.txt` to `linux.txt` on linux platform.*
 
 ``` bash
 conda activate mymodels
@@ -46,25 +33,28 @@ conda activate mymodels
 pip
 
 ``` bash
-pip install -r windows.txt  # The same replacement to above.
+pip install -r env.yml
 ```
 
-## 2. Execute
-
 # To-do
-
--   [ ] Support categorical features (CatBoost is Recommended).
 
 -   [x] Test on Linux (64-bit)
 
 -   [x] Plot SHAP results
 
+-   [ ] Support categorical features (CatBoost is Recommended).
+
 -   [ ] GPU acceleration for training, testing, and SHAP.
 
 -   [ ] Adopt to the classification tasks.
 
-# Logs
+# Log
 
+## 2024.07.03
+
+1. Add figures of results.
+
+2. Change the stop of installing environment.
 
 ## 2024.07.02
 

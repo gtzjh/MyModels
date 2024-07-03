@@ -1,5 +1,0 @@
-max_depth: 12
-min_samples_leaf: 2
-min_samples_split: 13
-n_estimators: 2500
-random_state: 6

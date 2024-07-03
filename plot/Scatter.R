@@ -45,7 +45,7 @@ plot_scatter <- function(test_data_path, train_data_path, accuracy_path){
              label = annotate_text, 
              hjust = 0, vjust = 1, 
              size = 4, family = "serif", fill = "#6295A2", alpha = 0.1) +
-    theme(aspect.ratio = 1, 
+    theme(aspect.ratio = 1,
           legend.position = "bottom",
           text = element_text(size = 12, family = "serif"))
   # ----------------------------------------------------------------------------

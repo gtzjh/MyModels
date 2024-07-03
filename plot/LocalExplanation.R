@@ -13,7 +13,7 @@ plot_local <- function(shap_data_path, shap_values_path){
     # Extract one factor data for plotting.
     fig <- data.frame(x = shap_data[[i]], y = shap_values[[i]]) %>%
       ggplot(aes(x = x, y = y)) + 
-      geom_point(size = 3, color = "#6295A2", alpha = 0.4) +
+      geom_point(size = 1.2, color = "#6295A2", alpha = 0.25) +
       geom_smooth(method = "lm", formula = y ~ poly(x, 2), se = FALSE, linewidth = 0.3) + 
       labs(title = i, x = "", y = "") +
       theme(text = element_text(size = 12, family = "serif"))
