@@ -2,6 +2,7 @@ rm(list = ls())
 setwd("C:/Users/jh/workspace/MyModels/")
 
 library(tidyverse)
+# library(ggExtra)  # For plotting the marginal histogram in scatter plot.
 library(yaml)
 library(patchwork)
 library(showtext)
@@ -44,7 +45,4 @@ local_explanation_plot <- plot_local("results/CAT/shap_data.csv",
 print(local_explanation_plot)
 ggsave("results/CAT/local_explanation_plot.png", plot = local_explanation_plot,
        width = 210, height = 297, units = "mm")
-
-
-
 
