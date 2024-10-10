@@ -6,11 +6,11 @@ from models import ml
 
 
 model = "cat"                # Model selection: "lgb", "cat", "rf", "dt".
+results_dir = "results/CAT"  # Where the results will be store in.
+trials = 50                  # How many trials to execute in optuna hyperparameters turning.
+shap_ratio = 0.1             # Use 10% of the whole dataset for SHAP calculation.
 cross_valid = 6              # Cross validation in optuna hyperparameters turning.
 random_state = 6             # Global random state control, for model training, cross validation turning, and testing.
-results_dir = "results/CAT"  # Where the results will be store in.
-trials = 30                  # How many trials to execute in optuna hyperparameters turning.
-shap_ratio = 0.05            # Use 100% of the whole dataset for SHAP calculation.
 
 
 def main():
