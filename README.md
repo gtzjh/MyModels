@@ -2,15 +2,27 @@
 
 [中文版本](#中文使用说明)
 
+# On-going
+
+- [x] Test on Linux (64-bit)
+
+- [x] Plot SHAP results
+
+- [ ] Support categorical features (CatBoost is Recommended).
+
+- [ ] GPU acceleration for training, testing, and SHAP.
+
+- [ ] Adopt to the classification tasks.
+
 # English Documentation
 
 **Store my machine learning and SHAP (SHapley Additive exPlanations) codes.**
 
-*For regression task only currently.*
-
 **DO REMEMBER: All models are wrong, but some are useful.**
 
-## Models Supported
+*For regression task only currently.*
+
+Models Supported:
 
 1. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
 
@@ -40,29 +52,63 @@ pip
 pip install -r env.yml
 ```
 
-# On-going
+## 2. Usage
 
-- [x] Test on Linux (64-bit)
+### 2.1 Model Training and Verification
 
-- [x] Plot SHAP results
+Execute the main program file `main.py`.
 
-- [ ] Support categorical features (CatBoost is Recommended).
+Alter lines 8 - 13 of `main.py` to meet your requirements.
 
-- [ ] GPU acceleration for training, testing, and SHAP.
+```python
+model = "cat"                # Model selection: "lgb", "cat", "rf", "dt", respectively representing LightGBM, CatBoost, Random Forest, Decision Tree.
+results_dir = "results/CAT"  # The folder where all results are saved. By default, a folder with the same name as the model abbreviation is created under the'results' folder.
+trials = 50                  # The number of Trials performed using the Optuna tuning parameter. The more Trials are conducted, the more hyperparameter possibilities will be traversed. The default value is 50. You do not need to modify it if not necessary.
+shap_ratio = 0.1             # The proportion of samples used to calculate the SHAP value. The default is 10%. Increasing this value will increase the running time but yield relatively more accurate results, and vice versa.
+cross_valid = 6              # [No modification] The number of times each Trial is cross-verified using Optuna.
+random_state = 6             # The global random seed for model training, cross-validation turning, and testing.
+```
 
-- [ ] Adopt to the classification tasks.
+### 2.2 SHAP Interpretation and Plotting
 
-******
+Currently, only global interpretation and local interpretation are supported.
+
+Install R (version 4.4.0 and above) and RStudio.
+
+Open the MyModels.Rproj project file.
+
+Open the plot.R plotting program.
+
+1. Set the working directory, that is, `setwd()`, and modify it according to your local path. It should point to the path of the `MyModels` folder.
+
+2. `results_dir <-` Please note that you must save the results in the folder you specify for yourself, corresponding to'results_dir' in the above main program.
+
+Verify that all parameters are correct. Generally, only the above two parameters need to be modified.
+
+Run the script.
+
+Result Interpretation: In the directory corresponding to `results_dir`, you can see pictures with the `.png` suffix.
+
+`scatter_plot.png` represents the model training and testing accuracy.
+
+`optimization_plot.png` shows the model validation accuracy for each Trial in the tuning process and the optimal accuracy up to the current Trial.
+
+`global_explanation_plot.png` is the global explanation, sorted from top to bottom by $mean(|SHAP|)$, representing the importance of the variable.
+
+`local_explanation_plot.png` is the local interpretation, which can be used to explore the influence thresholds and inflection points of each variable.
+
+
+************************************************************************************************************************************************************
 
 # 中文使用说明
 
 存储我常用的机器学习模型，并使用Optuna进行贝叶斯调参。用最少的时间完成机器学习任务。
 
-*目前仅支持回归任务。*
-
 **请记住：所有模型都是错的，但有一些是有用的。**
 
-## 支持的模型
+*目前仅支持回归任务。*
+
+本项目包含的模型：
 
 1. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
 
@@ -72,7 +118,7 @@ pip install -r env.yml
 
 4. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
-## 环境准备（Windows平台，其余平台同理）
+## 1. 环境准备（Windows平台，其余平台同理）
 
 *环境安装大约使用1.75 GiB存储空间*
 
@@ -92,9 +138,9 @@ pip
 pip install -r env.yml
 ```
 
-## 使用
+## 2. 使用
 
-### 模型训练及验证
+### 2.1 模型训练及验证
 
 运行主程序文件 `main.py`。
 
@@ -109,7 +155,7 @@ cross_valid = 6              # 【不用修改】使用Optuna调参，每个Tria
 random_state = 6             # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
 ```
 
-### SHAP解释绘图
+### 2.2 SHAP解释绘图
 
 目前仅支持全局解释与局部解释。
 
