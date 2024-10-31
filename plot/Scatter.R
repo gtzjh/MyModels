@@ -41,11 +41,11 @@ plot_scatter <- function(test_data_path, train_data_path, accuracy_path){
     geom_abline(intercept = 0, slope = 1, color = "gray") +
     geom_point(alpha = 0.2, size = 3) +
     scale_color_manual(values = group_color) +
-    annotate("label",
-             x = 50, y = 1600,
-             label = annotate_text, 
-             hjust = 0, vjust = 1, 
-             size = 2.5, family = "serif", fill = "#6295A2", alpha = 0.1)
+    # annotate("label",
+    #          x = max(scatter_data$actual), y = max(scatter_data$pred),
+    #          label = annotate_text, 
+    #          hjust = 0, vjust = 1, 
+    #          size = 2.5, family = "serif", fill = "#6295A2", alpha = 0.1)
     theme(aspect.ratio = 1,
           legend.position = "bottom",
           text = element_text(size = 12, family = "serif"))

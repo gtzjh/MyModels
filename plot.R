@@ -1,6 +1,6 @@
 rm(list = ls())
-setwd("C:/Users/jh/workspace/MyModels/")
-results_dir <- "results/CAT/"
+setwd("C:/Users/jh/workspace/MyModels/")  # Change the path to your work space.
+results_dir <- "results/CAT/"             # Change the results dir path as you need.
 
 library(tidyverse)
 library(yaml)
@@ -40,6 +40,7 @@ ggsave(paste(results_dir, "global_explanation_plot.png", sep = ""), plot = globa
 
 
 # Local explanation
+# The local explanation may be very large, adjut the output width and height as you need. Here is in a A4 size.
 local_explanation_plot <- plot_local(paste(results_dir, "shap_data.csv", sep = ""),
                                      paste(results_dir, "shap_values.csv", sep = ""))
 print(local_explanation_plot)
