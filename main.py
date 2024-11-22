@@ -8,7 +8,7 @@ from models import ml
 model = "rf"                 # Model selection: "lgb", "cat", "rf", "dt".
 results_dir = "results/RF"   # Where the results will be store in.
 trials = 50                  # How many trials to execute in optuna hyperparameters turning.
-test_ratio = 0.2             # Ratio for test in the whole dataset.
+test_ratio = 0.3             # Ratio for test in the whole dataset.
 shap_ratio = 0.1             # Use 10% of the whole dataset for SHAP calculation.
 cross_valid = 3              # Cross validation in optuna hyperparameters turning.
 random_state = 0             # Global random state control, for model training, cross validation turning, and testing.

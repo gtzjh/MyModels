@@ -25,13 +25,9 @@ Models Supported:
 
 ## 0. Former knowledge
 
-1. Familiar with Python programming. Liao Xuefeng's tutorial provides a very good guide to get started. It is recommended to learn **section 17**. Common built-in modules can be used, and **focus on section 7,8,9,10,11**. Try to complete the exercises after each lesson. Finally, you must test your learning results with a practical project, such as designing a crawler or implementing some small functions. Please do not use ChatGPT at this stage, but you can write it later and ask it to give suggestions for code optimization to improve yourself.
+1. Familiar with Python programming. [Liao Xuefeng's tutorial](https://liaoxuefeng.com/books/python/introduction/index.html) provides a very good guide to get started. It is recommended to learn **section 17**. Common built-in modules can be used, and **focus on section 7,8,9,10,11**. Try to complete the exercises after each lesson. Finally, you must test your learning results with a practical project [(Here is my demon)](https://github.com/gtzjh/WundergroundSpider), such as designing a crawler or implementing some small functions. Please do not use ChatGPT at this stage, but you can write it later and ask it to give suggestions for code optimization to improve yourself.
 
-    > https://liaoxuefeng.com/books/python/introduction/index.html
-
-2. Fundamentals of machine learning. CS229 from Dr. Andrew Ng is a perfect tutorials.
-
-    > https://www.bilibili.com/video/BV1JE411w7Ub
+2. Fundamentals of machine learning. [CS229](https://www.bilibili.com/video/BV1JE411w7Ub) from Dr. Andrew Ng is a perfect tutorials.
 
 3. Other
    
@@ -39,7 +35,7 @@ Models Supported:
 
     **Understand how to use Terminal**
 
-    It is recommended to learn to use Git, try to build a project on GitHub yourself and learn to use it to manage the code.
+    It is recommended to learn to use Git [Here is my little demon](https://github.com/gtzjh/learngit), try to build a project on GitHub yourself and learn to use it to manage the code.
 
     VScode is recommended.
     
@@ -78,9 +74,10 @@ Alter lines 8 - 13 of `main.py` to meet your requirements.
 model = "cat"                # Model selection: "lgb", "cat", "rf", "dt", respectively representing LightGBM, CatBoost, Random Forest, Decision Tree.
 results_dir = "results/CAT"  # The folder where all results are saved. By default, a folder with the same name as the model abbreviation is created under the'results' folder.
 trials = 50                  # The number of Trials performed using the Optuna tuning parameter. The more Trials are conducted, the more hyperparameter possibilities will be traversed. The default value is 50. You do not need to modify it if not necessary.
+test_ratio = 0.3             # Ratio for test set
 shap_ratio = 0.1             # The proportion of samples used to calculate the SHAP value. The default is 10%. Increasing this value will increase the running time but yield relatively more accurate results, and vice versa.
-cross_valid = 6              # [No modification] The number of times each Trial is cross-verified using Optuna.
-random_state = 6             # The global random seed for model training, cross-validation turning, and testing.
+cross_valid = 5              # [No modification] The number of times each Trial is cross-verified using Optuna.
+random_state = 0             # The global random seed for model training, cross-validation turning, and testing.
 ```
 
 ### 2.2 SHAP Interpretation and Plotting
@@ -135,13 +132,9 @@ Result Interpretation: In the directory corresponding to `results_dir`, you can 
 
 ## 0. 前置知识
 
-1. 熟悉Python编程。廖雪峰老师的教程提供了非常好的入门指引，建议学到 17.常用内建模块即可，而对7，8，9，10，11则要重点掌握。每一节学完以后尝试去完成课后习题。最后，**一定要以一个实践项目来检验自己的学习成果**，比如设计一段爬虫，或是实现一些小功能等。请不要在这一阶段使用ChatGPT，但可以再写出来以后让其给出代码优化建议让自己进步。
+1. 熟悉Python编程。[廖雪峰老师的教程](https://liaoxuefeng.com/books/python/introduction/index.html)提供了非常好的入门指引，建议学到 17.常用内建模块即可，而对7，8，9，10，11则要重点掌握。每一节学完以后尝试去完成课后习题。最后，**一定要以一个实践项目来检验自己的学习成果**，比如设计一段爬虫，或是实现一些小功能等 [(这是我写的一个小爬虫)](https://github.com/gtzjh/WundergroundSpider)。请不要在这一阶段使用ChatGPT，但可以再写出来以后让其给出代码优化建议让自己进步。
 
-    > https://liaoxuefeng.com/books/python/introduction/index.html
-
-2. 机器学习的基础。吴恩达老师的CS229课程是非常棒的资料。
-
-    > https://www.bilibili.com/video/BV1JE411w7Ub
+2. 机器学习的基础。吴恩达老师的[CS229](https://www.bilibili.com/video/BV1JE411w7Ub)课程是非常棒的资料。
 
 3. 其他
 
@@ -149,7 +142,7 @@ Result Interpretation: In the directory corresponding to `results_dir`, you can 
 
     **明白如何使用终端（Terminal）**
 
-    建议学会使用Git，尝试自己在GitHub上建一个项目并学会用它来管理代码。
+    建议学会使用[Git](https://github.com/gtzjh/learngit)，尝试自己在GitHub上建一个项目并学会用它来管理代码。
 
     建议使用VScode，
 
@@ -189,9 +182,10 @@ pip install -r win-env.txt
 model = "cat"                # 模型选择: "lgb", "cat", "rf", "dt"，分别代表 LightGBM，CatBoost，Random Forest，Decision Tree。
 results_dir = "results/CAT"  # 所有结果保存的文件夹，可自行修改。默认为在 results文件夹下创建与模型缩写同名的文件夹。
 trials = 50                  # 使用Optuna调参，执行多少个Trials，次数越多，将会遍历更多的超参数可能性。默认为50，如无必要无需修改。
+test_ratio = 0.3             # 使用多少数据作为测试
 shap_ratio = 0.1             # 使用多少样本计算SHAP值。默认为10%。增加这一值将会需要更长的运行时间，但可以得到相对更加精确的结果，反之亦然。
-cross_valid = 6              # 【不用修改】使用Optuna调参，每个Trial进行多少次交叉验证。
-random_state = 6             # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
+cross_valid = 5              # 【不用修改】使用Optuna调参，每个Trial进行多少次交叉验证。
+random_state = 0             # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
 ```
 
 ### 2.2 SHAP解释绘图
