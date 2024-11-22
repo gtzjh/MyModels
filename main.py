@@ -7,10 +7,10 @@ from models import ml
 
 model = "rf"                 # Model selection: "lgb", "cat", "rf", "dt".
 results_dir = "results/RF"   # Where the results will be store in.
-trials = 100                  # How many trials to execute in optuna hyperparameters turning.
-test_ratio = 0.1             # Ratio for test in the whole dataset.
+trials = 50                  # How many trials to execute in optuna hyperparameters turning.
+test_ratio = 0.2             # Ratio for test in the whole dataset.
 shap_ratio = 0.1             # Use 10% of the whole dataset for SHAP calculation.
-cross_valid = 10              # Cross validation in optuna hyperparameters turning.
+cross_valid = 3              # Cross validation in optuna hyperparameters turning.
 random_state = 0             # Global random state control, for model training, cross validation turning, and testing.
 
 
@@ -20,12 +20,10 @@ def main():
     x_train, x_test, y_train, y_test = dataLoader(
         file_path = "data/data.csv",
         y_index = 0, 
-        x_index_list = range(1, 26),
+        x_index_list = range(1, 16),
         test_ratio = test_ratio
     )
     ###########################################################################
-
-    print(x_train)
 
     ###########################################################################
     # Execute machine learning
