@@ -60,6 +60,12 @@ conda env create -f env.yml -n mymodels
 conda activate mymodels
 ```
 
+Or use the `pip3` when the `conda` command is not available.
+
+```bash
+pip install -r win-env.txt
+```
+
 ## 2. Usage
 
 ### 2.1 Model Training and Verification
@@ -163,6 +169,12 @@ conda env create -f env.yml -n mymodels
 
 ```bash
 conda activate mymodels
+```
+
+如果无法使用conda，则使用pip
+
+```bash
+pip install -r win-env.txt
 ```
 
 ## 2. 使用
