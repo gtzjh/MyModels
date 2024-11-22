@@ -50,7 +50,7 @@ Models Supported:
 
 *About 1.75 GiB storage would be used.*
 
-conda (**Recommended**)
+conda
 
 ```bash
 conda env create -f env.yml -n mymodels
@@ -58,12 +58,6 @@ conda env create -f env.yml -n mymodels
 
 ```bash
 conda activate mymodels
-```
-
-pip
-
-```bash
-pip install -r env.yml
 ```
 
 ## 2. Usage
@@ -161,7 +155,7 @@ Result Interpretation: In the directory corresponding to `results_dir`, you can 
 
 *环境安装大约使用1.75 GiB存储空间*
 
-conda (**推荐使用conda安装**)
+conda
 
 ```bash
 conda env create -f env.yml -n mymodels
@@ -169,12 +163,6 @@ conda env create -f env.yml -n mymodels
 
 ```bash
 conda activate mymodels
-```
-
-pip
-
-```bash
-pip install -r env.yml
 ```
 
 ## 2. 使用
