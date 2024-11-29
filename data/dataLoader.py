@@ -15,6 +15,12 @@ def dataLoader(
     y_data = _df.iloc[:, y_index]
     x_data = _df.iloc[:, x_index_list]
 
+    print("\nDependency data:")
+    print(y_data.describe())
+
+    print("\nIndependency data:")
+    print(x_data.describe())
+
     # x_train, x_test, y_train, y_test
     return train_test_split(
         x_data, y_data, 

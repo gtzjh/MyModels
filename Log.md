@@ -1,5 +1,14 @@
 # Log
 
+## 20241129
+
+Remove the R plotting code for SHAP summary plot and partial dependency plot (PDP).
+
+## 2024.11.27
+1. Add GBDT.
+
+2. Used another dataset for demonstration.
+
 ## 2024.10.10
 
 1. Add Chinese version.

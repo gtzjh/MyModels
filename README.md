@@ -23,6 +23,8 @@ Models Supported:
 
 4. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
+5. [GBDT](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+
 ## 0. Former knowledge
 
 1. Familiar with Python programming. [Liao Xuefeng's tutorial](https://liaoxuefeng.com/books/python/introduction/index.html) provides a very good guide to get started. It is recommended to learn **section 17**. Common built-in modules can be used, and **focus on section 7,8,9,10,11**. Try to complete the exercises after each lesson. Finally, you must test your learning results with a practical project [(Here is my demon)](https://github.com/gtzjh/WundergroundSpider), such as designing a crawler or implementing some small functions. Please do not use ChatGPT at this stage, but you can write it later and ask it to give suggestions for code optimization to improve yourself.
@@ -66,6 +68,8 @@ pip install -r win-env.txt
 
 ### 2.1 Model Training and Verification
 
+【以下内容需要修改】
+
 Execute the main program file `main.py`.
 
 Alter lines 8 - 13 of `main.py` to meet your requirements.
@@ -80,7 +84,7 @@ cross_valid = 5              # [No modification] The number of times each Trial 
 random_state = 0             # The global random seed for model training, cross-validation turning, and testing.
 ```
 
-### 2.2 SHAP Interpretation and Plotting
+### [ABANDOM] 2.2 SHAP Interpretation and Plotting
 
 Currently, only global interpretation and local interpretation are supported.
 
@@ -129,6 +133,8 @@ Result Interpretation: In the directory corresponding to `results_dir`, you can 
 
 4. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
+5. [GBDT](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+
 
 ## 0. 前置知识
 
@@ -174,6 +180,8 @@ pip install -r win-env.txt
 
 ### 2.1 模型训练及验证
 
+【以下内容需要修改】
+
 运行主程序文件 `main.py`。
 
 根据自己需要修改 `main.py` 第8 - 第13行。
@@ -188,9 +196,7 @@ cross_valid = 5              # 【不用修改】使用Optuna调参，每个Tria
 random_state = 0             # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
 ```
 
-### 2.2 SHAP解释绘图
-
-目前仅支持全局解释与局部解释。
+### 【以下暂时放弃】2.2 SHAP解释绘图
 
 先安装 R (4.4.0以上版本) 与 RStudio，
 
@@ -211,7 +217,3 @@ random_state = 0             # 【不用修改】全局随机种子, for model t
 `scatter_plot.png` 模型训练与测试精度。
 
 `optimization_plot.png` 调参过程中每个Trial得到的模型验证精度以及截止至当前Trial的最优精度。
-
-`global_explanation_plot.png` 全局解释，按照mean(|SHAP|)从上至下排序，代表该变量的重要性。
-
-`local_explanation_plot.png` 局部解释，可用于探究每个变量的影响阈值及拐点。

@@ -1,4 +1,4 @@
-plot_global <- function(global_explanation_path, color = "#6295A2"){
+plot_global <- function(global_explanation_path){
   # Read files and trans it to long dataframe.
   global_explanation <- read_csv(global_explanation_path, show_col_types = FALSE) %>%
     pivot_longer(cols = everything(), names_to = "factors", values_to = "shap_values")
@@ -13,11 +13,11 @@ plot_global <- function(global_explanation_path, color = "#6295A2"){
                                                        decreasing = FALSE)])
   
   global_explanation_plot <- global_explanation %>%
-    ggplot(aes(x = shap_values, y = factors)) +
-    geom_boxplot(size = 0.6, color = color) +
-    labs(x = "", y = "") +
+    ggplot(aes(x = shap_values, y = factors, color = shap_values)) +
+    geom_beeswarm(priority = 'density', size = 2, cex = 0.8) + 
+    labs(x = "", y = "") + 
+    scale_color_gradient(low = "blue", high = "red") +
     theme(text = element_text(size = 12, family = "serif"))
-  
   
   return(global_explanation_plot)
 }

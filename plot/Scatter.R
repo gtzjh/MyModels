@@ -33,6 +33,13 @@ plot_scatter <- function(test_data_path, train_data_path, accuracy_path){
     rename("actual" = "y_train", "pred" = "y_train_pred")
   scatter_train$group <- "train"
   scatter_data <- bind_rows(list(scatter_train, scatter_test))
+  
+  axis_min <- min(
+    c(min(scatter_data$actual), min(scatter_data$pred))
+  )
+  axis_max <- max(
+    c(max(scatter_data$actual), max(scatter_data$pred))
+  )
   # ----------------------------------------------------------------------------
   
   # ----------------------------------------------------------------------------
@@ -40,13 +47,15 @@ plot_scatter <- function(test_data_path, train_data_path, accuracy_path){
     ggplot(aes(x = actual, y = pred, group = group, color = group)) +
     geom_abline(intercept = 0, slope = 1, color = "gray") +
     geom_point(alpha = 0.2, size = 3) +
+    xlim(axis_min, axis_max) + ylim(axis_min, axis_max) + 
     scale_color_manual(values = group_color) +
-    # annotate("label",
-    #          x = max(scatter_data$actual), y = max(scatter_data$pred),
-    #          label = annotate_text, 
-    #          hjust = 0, vjust = 1, 
-    #          size = 2.5, family = "serif", fill = "#6295A2", alpha = 0.1)
+    annotate("label",
+             x = axis_min, y = axis_max,
+             label = annotate_text,
+             hjust = 0, vjust = 1,
+             size = 2.5, family = "serif", fill = "#6295A2", alpha = 0.1) +
     theme(aspect.ratio = 1,
+          legend.title = element_blank(),
           legend.position = "bottom",
           text = element_text(size = 12, family = "serif"))
   # ----------------------------------------------------------------------------
