@@ -11,6 +11,9 @@ shap.initjs()
 plt.rc('font', family = 'Times New Roman')
 
 
+file_path = "data/data.csv"         # Where to load data
+y_index = 0                         # Choose the index as dependency (y)
+x_index_list = range(1, 16)         # Choose the index as independency (x)
 model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
 results_dir = Path("results/").joinpath(model) # Use the model name as the results dir
 trials = 50                         # How many trials to execute in optuna hyperparameters turning.
@@ -24,10 +27,11 @@ def main():
     ###########################################################################
     # Data preparing
     x_train, x_test, y_train, y_test = dataLoader(
-        file_path = "data/data.csv",
+        file_path = file_path,
         y_index = 0, 
-        x_index_list = range(1, 15),
-        test_ratio = test_ratio
+        x_index_list = x_index_list,
+        test_ratio = test_ratio,
+        random_state = random_state
     )
     ###########################################################################
 
@@ -69,12 +73,11 @@ def main():
 
     # Dependency plot
     # Create the dir if not exists
-    results_dir.joinpath("PDP").mkdir(parents = True,
-                                        exist_ok = True)
+    results_dir.joinpath("PDP").mkdir(parents = True, exist_ok = True)
     for _feature_name in shap_data.columns:
         shap.plots.scatter(shap_values[:, _feature_name],
-                            color = "steelblue", alpha = 0.4, dot_size = 27,
-                            show = False)
+                           color = "steelblue", alpha = 0.4, dot_size = 40,
+                           show = False)
         plt.tight_layout()
         plt.savefig(results_dir.joinpath("PDP").joinpath(_feature_name + '.jpg') , dpi = 500)
         plt.savefig(results_dir.joinpath("PDP").joinpath(_feature_name + '.pdf') , dpi = 500)

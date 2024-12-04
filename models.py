@@ -4,13 +4,11 @@ import optuna
 from optuna.visualization import plot_optimization_history
 from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from lightgbm import LGBMRegressor
-from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
+from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error
 from sklearn.model_selection import cross_val_score, KFold
-from pathlib import Path
-import os, yaml
+import yaml, pathlib
 
 
 ###############################################################################
@@ -180,24 +178,19 @@ def GBDT(_x_train, _y_train, _cv, _trials, _random_state):
 ###############################################################################
 
 
-
-def ml(
-        x_train, x_test, y_train, y_test,  # Input train and test data
-        model,                             # Model selection
-        cv = 6,                            # Cross-validation for 6 times
-        random_state = 6,                  # Global setting
-        trials = 100,                      # Execute 100 times in optuna
-        results_dir = "results/",          # The dir to store the optimization results
-        cat_features = None
+###############################################################################
+def ml(x_train, x_test, y_train, y_test,  # Input train and test data
+       model,                             # Model selection
+       cv,                                # Cross-validation for 6 times
+       random_state,                      # Global random state setting
+       trials,                            # Execute 100 times in optuna
+       results_dir,                       # The dir to store the optimization results
+       cat_features = None
     ):
     assert model == "cat" or model == "rf" or model == "dt" or model == "lgb" or model == "gbdt"
-    
-    #######################################################
-    # Check wether the results dir is exist
-    results_dir = Path(results_dir)
-    if results_dir.exists() == False:
-        os.makedirs(str(results_dir))
-    #######################################################
+    assert isinstance(results_dir, pathlib.Path)
+    results_dir.mkdir(parents = True, exist_ok = True)
+
 
     #######################################################
     # Select model
@@ -271,9 +264,9 @@ def ml(
     ########################################################
     # Return the best trial and parameters
     best_params = study.best_trial.params
-    print(best_params)
     with open(results_dir.joinpath("params.yml"), 'w', encoding = "utf-8") as file:
         yaml.dump(best_params, file)
+    print("\n", best_params)
     
 
     # Train a model base on the optimal parameters
@@ -297,7 +290,7 @@ def ml(
         results_dir.joinpath("scatter_test.csv"),
         encoding = "utf-8", index = False
     )
-    print("Accuracy on test set ", test_accuracy)
+    print("\n**THE MOST IMPORTANT!** Accuracy on test set: ", test_accuracy)
     #-------------------------------------------------------
 
     #-------------------------------------------------------
@@ -316,7 +309,7 @@ def ml(
         results_dir.joinpath("scatter_train.csv"),
         encoding = "utf-8", index = False
     )
-    print("Accuracy on train set ", train_accuracy)
+    print("Accuracy on train set: ", train_accuracy)
     #-------------------------------------------------------
 
     accuracy_dict = dict({

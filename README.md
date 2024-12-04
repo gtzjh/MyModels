@@ -69,13 +69,16 @@ pip install -r win-env.txt
 Change the following content in `main.py` to meet your requirements.
 
 ```python
-model = "rf"                # Model selection: "lgb", "cat", "rf", "dt", respectively representing LightGBM, CatBoost, Random Forest, Decision Tree.
+file_path = "data/data.csv"      # Where to load data
+y_index = 0                      # Choose the index as dependency (y)
+x_index_list = range(1, 15)      # Choose the index as independency (x)
+model = "rf"                     # Model selection: "lgb", "cat", "rf", "dt", respectively representing LightGBM, CatBoost, Random Forest, Decision Tree.
 results_dir = Path("results/").joinpath(model)  # The folder where all results are saved. By default, a folder with the same name as the model abbreviation is created under the'results' folder.
-trials = 100                  # The number of Trials performed using the Optuna tuning parameter. The more Trials are conducted, the more hyperparameter possibilities will be traversed. The default value is 50. You do not need to modify it if not necessary.
-test_ratio = 0.3             # Ratio for test set
-shap_ratio = 0.3             # The proportion of samples used to calculate the SHAP value. The default is 10%. Increasing this value will increase the running time but yield relatively more accurate results, and vice versa.
-cross_valid = 5              # [No modification] The number of times each Trial is cross-verified using Optuna.
-random_state = 0             # The global random seed for model training, cross-validation turning, and testing.
+trials = 100                     # The number of Trials performed using the Optuna tuning parameter. The more Trials are conducted, the more hyperparameter possibilities will be traversed. The default value is 50. You do not need to modify it if not necessary.
+test_ratio = 0.3                 # Ratio for test set
+shap_ratio = 0.3                 # The proportion of samples used to calculate the SHAP value. The default is 10%. Increasing this value will increase the running time but yield relatively more accurate results, and vice versa.
+cross_valid = 5                  # [No modification] The number of times each Trial is cross-verified using Optuna.
+random_state = 0                 # The global random seed for model training, cross-validation turning, and testing.
 ```
 
 Run the `main.py` .
@@ -148,13 +151,16 @@ pip install -r win-env.txt
 根据自己需要修改 `main.py` 中的以下内容：
 
 ```python
-model = "rf"                # 模型选择: "lgb", "cat", "rf", "dt"，分别代表 LightGBM，CatBoost，Random Forest，Decision Tree。
+file_path = "data/data.csv"     # 选择数据文件
+y_index = 0                     # 哪一列是因变量 y
+x_index_list = range(1, 15)     # 哪一列是自变量 x
+model = "rf"                    # 模型选择: "lgb", "cat", "rf", "dt"，分别代表 LightGBM，CatBoost，Random Forest，Decision Tree。
 results_dir = Path("results/").joinpath(model)  # 所有结果保存的文件夹，可自行修改。默认为在 results文件夹下创建与模型缩写同名的文件夹。
-trials = 100                  # 使用Optuna调参，执行多少个Trials，次数越多，将会遍历更多的超参数可能性。默认为50，如无必要无需修改。
-test_ratio = 0.3             # 使用多少数据作为测试
-shap_ratio = 0.3             # 使用多少样本计算SHAP值。默认为10%。增加这一值将会需要更长的运行时间，但可以得到相对更加精确的结果，反之亦然。
-cross_valid = 5              # 【不用修改】使用Optuna调参，每个Trial进行多少次交叉验证。
-random_state = 0             # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
+trials = 100                    # 使用Optuna调参，执行多少个Trials，次数越多，将会遍历更多的超参数可能性。默认为50，如无必要无需修改。
+test_ratio = 0.3                # 使用多少数据作为测试
+shap_ratio = 0.3                # 使用多少样本计算SHAP值。默认为10%。增加这一值将会需要更长的运行时间，但可以得到相对更加精确的结果，反之亦然。
+cross_valid = 5                 # 【不用修改】使用Optuna调参，每个Trial进行多少次交叉验证。
+random_state = 0                # 【不用修改】全局随机种子, for model training, cross validation turning, and testing.
 ```
 
 运行 main.py 。

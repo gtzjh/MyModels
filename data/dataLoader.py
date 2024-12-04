@@ -8,7 +8,7 @@ def dataLoader(
     y_index,  # Only one column can be specify as y
     x_index_list, 
     test_ratio = 0.3,
-    random_state = 42
+    random_state = 0
 ):
     _df = pd.read_csv(file_path, encoding = "utf-8", na_values = np.nan)
     
