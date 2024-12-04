@@ -12,7 +12,7 @@ plt.rc('font', family = 'Times New Roman')
 
 
 model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
-results_dir = Path("results/").joinpath("") # Use the model name as the results dir
+results_dir = Path("results/").joinpath(model) # Use the model name as the results dir
 trials = 100                        # How many trials to execute in optuna hyperparameters turning.
 test_ratio = 0.3                    # Ratio for test in the whole dataset.
 shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
