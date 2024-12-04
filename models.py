@@ -283,22 +283,21 @@ def ml(
 
     #-------------------------------------------------------
     # Accuracy on test set
-    y_pred = best_model.predict(x_test)
+    y_test_pred = best_model.predict(x_test)
     test_accuracy = dict({
-        "R2": float(r2_score(y_test, y_pred)),
-        "RMSE": float(root_mean_squared_error(y_test, y_pred)),
-        "MAE": float(mean_absolute_error(y_test, y_pred)),
-        "MAPE": float(mean_absolute_percentage_error(y_test, y_pred))
+        "R2": float(r2_score(y_test, y_test_pred)),
+        "RMSE": float(root_mean_squared_error(y_test, y_test_pred)),
+        "MAE": float(mean_absolute_error(y_test, y_test_pred)),
     })
     scatter_test = pd.DataFrame(data = {
         "y_test": y_test,
-        "y_pred": y_pred
+        "y_test_pred": y_test_pred
     })
     scatter_test.to_csv(
         results_dir.joinpath("scatter_test.csv"),
         encoding = "utf-8", index = False
     )
-    print(test_accuracy)
+    print("Accuracy on test set ", test_accuracy)
     #-------------------------------------------------------
 
     #-------------------------------------------------------
@@ -308,7 +307,6 @@ def ml(
         "R2": float(r2_score(y_train, y_train_pred)),
         "RMSE": float(root_mean_squared_error(y_train, y_train_pred)),
         "MAE": float(mean_absolute_error(y_train, y_train_pred)),
-        "MAPE": float(mean_absolute_percentage_error(y_train, y_train_pred))
     })
     scatter_train = pd.DataFrame(data = {
         "y_train": y_train,
@@ -318,7 +316,7 @@ def ml(
         results_dir.joinpath("scatter_train.csv"),
         encoding = "utf-8", index = False
     )
-    print(train_accuracy)
+    print("Accuracy on train set ", train_accuracy)
     #-------------------------------------------------------
 
     accuracy_dict = dict({

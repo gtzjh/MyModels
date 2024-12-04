@@ -13,7 +13,7 @@ plt.rc('font', family = 'Times New Roman')
 
 model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
 results_dir = Path("results/").joinpath(model) # Use the model name as the results dir
-trials = 100                        # How many trials to execute in optuna hyperparameters turning.
+trials = 50                         # How many trials to execute in optuna hyperparameters turning.
 test_ratio = 0.3                    # Ratio for test in the whole dataset.
 shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
 cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
@@ -24,9 +24,9 @@ def main():
     ###########################################################################
     # Data preparing
     x_train, x_test, y_train, y_test = dataLoader(
-        file_path = "data/grid500.csv",
-        y_index = 1, 
-        x_index_list = range(2, 17),
+        file_path = "data/data.csv",
+        y_index = 0, 
+        x_index_list = range(1, 15),
         test_ratio = test_ratio
     )
     ###########################################################################
