@@ -6,24 +6,27 @@ import matplotlib.pyplot as plt
 from models import ml
 from pathlib import Path
 
+
 shap.initjs()
 plt.rc('font', family = 'Times New Roman')
 
-def main():
-    model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
-    results_dir = Path("results/").joinpath(model)    # Use the model name as the results dir
-    trials = 100                          # How many trials to execute in optuna hyperparameters turning.
-    test_ratio = 0.3                    # Ratio for test in the whole dataset.
-    shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
-    cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
-    random_state = 0                    # Global random state control, for model training, cross validation turning, and testing.
 
+model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
+results_dir = Path("results/").joinpath("") # Use the model name as the results dir
+trials = 100                        # How many trials to execute in optuna hyperparameters turning.
+test_ratio = 0.3                    # Ratio for test in the whole dataset.
+shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
+cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
+random_state = 0                    # Global random state control, for model training, cross validation turning, and testing.
+
+
+def main():
     ###########################################################################
     # Data preparing
     x_train, x_test, y_train, y_test = dataLoader(
-        file_path = "data/data.csv",
+        file_path = "data/grid500.csv",
         y_index = 1, 
-        x_index_list = range(3, 18),
+        x_index_list = range(2, 17),
         test_ratio = test_ratio
     )
     ###########################################################################
@@ -67,11 +70,11 @@ def main():
     # Dependency plot
     # Create the dir if not exists
     results_dir.joinpath("PDP").mkdir(parents = True,
-                                    exist_ok = True)
+                                        exist_ok = True)
     for _feature_name in shap_data.columns:
         shap.plots.scatter(shap_values[:, _feature_name],
-                        color = "steelblue", alpha = 0.4, dot_size = 27,
-                        show = False)
+                            color = "steelblue", alpha = 0.4, dot_size = 27,
+                            show = False)
         plt.tight_layout()
         plt.savefig(results_dir.joinpath("PDP").joinpath(_feature_name + '.jpg') , dpi = 500)
         plt.savefig(results_dir.joinpath("PDP").joinpath(_feature_name + '.pdf') , dpi = 500)
