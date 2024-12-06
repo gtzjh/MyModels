@@ -3,7 +3,7 @@ import pandas as pd
 from data.dataLoader import dataLoader
 import shap
 import matplotlib.pyplot as plt
-from models import ml
+from models import regressor
 from pathlib import Path
 
 
@@ -14,9 +14,9 @@ plt.rc('font', family = 'Times New Roman')
 file_path = "data/data.csv"         # Where to load data
 y_index = 0                         # Choose the index as dependency (y)
 x_index_list = range(1, 16)         # Choose the index as independency (x)
-model = "rf"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
+model = "lgb"                        # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
 results_dir = Path("results/").joinpath(model) # Use the model name as the results dir
-trials = 50                         # How many trials to execute in optuna hyperparameters turning.
+trials = 100                         # How many trials to execute in optuna hyperparameters turning.
 test_ratio = 0.3                    # Ratio for test in the whole dataset.
 shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
 cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
@@ -37,7 +37,7 @@ def main():
 
     ###########################################################################
     # Execute machine learning
-    best_model = ml(
+    best_model = regressor(
         x_train, x_test, y_train, y_test,
         model = model,
         cv = cross_valid,

@@ -1,5 +1,9 @@
 # Log
 
+## 20241206
+
+Remove the R plotting code for scatter plot.
+
 ## 20241129
 
 Remove the R plotting code for SHAP summary plot and partial dependency plot (PDP).

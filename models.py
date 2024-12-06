@@ -6,9 +6,9 @@ from catboost import CatBoostRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from lightgbm import LGBMRegressor
-from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error
 from sklearn.model_selection import cross_val_score, KFold
 import yaml, pathlib
+from accTest import accTest
 
 
 ###############################################################################
@@ -179,7 +179,7 @@ def GBDT(_x_train, _y_train, _cv, _trials, _random_state):
 
 
 ###############################################################################
-def ml(x_train, x_test, y_train, y_test,  # Input train and test data
+def regressor(x_train, x_test, y_train, y_test,  # Input train and test data
        model,                             # Model selection
        cv,                                # Cross-validation for 6 times
        random_state,                      # Global random state setting
@@ -188,7 +188,8 @@ def ml(x_train, x_test, y_train, y_test,  # Input train and test data
        cat_features = None
     ):
     assert model == "cat" or model == "rf" or model == "dt" or model == "lgb" or model == "gbdt"
-    assert isinstance(results_dir, pathlib.Path)
+    assert isinstance(results_dir, pathlib.Path) or isinstance(results_dir, str)
+    results_dir = pathlib.Path(results_dir)
     results_dir.mkdir(parents = True, exist_ok = True)
 
 
@@ -274,50 +275,13 @@ def ml(x_train, x_test, y_train, y_test,  # Input train and test data
     best_model = use_model(**best_params)
     best_model.fit(x_train, y_train)
 
-    #-------------------------------------------------------
-    # Accuracy on test set
+
+    # Test Accuracy
     y_test_pred = best_model.predict(x_test)
-    test_accuracy = dict({
-        "R2": float(r2_score(y_test, y_test_pred)),
-        "RMSE": float(root_mean_squared_error(y_test, y_test_pred)),
-        "MAE": float(mean_absolute_error(y_test, y_test_pred)),
-    })
-    scatter_test = pd.DataFrame(data = {
-        "y_test": y_test,
-        "y_test_pred": y_test_pred
-    })
-    scatter_test.to_csv(
-        results_dir.joinpath("scatter_test.csv"),
-        encoding = "utf-8", index = False
-    )
-    print("\n**THE MOST IMPORTANT!** Accuracy on test set: ", test_accuracy)
-    #-------------------------------------------------------
-
-    #-------------------------------------------------------
-    # Accuracy on training set
     y_train_pred = best_model.predict(x_train)
-    train_accuracy = dict({
-        "R2": float(r2_score(y_train, y_train_pred)),
-        "RMSE": float(root_mean_squared_error(y_train, y_train_pred)),
-        "MAE": float(mean_absolute_error(y_train, y_train_pred)),
-    })
-    scatter_train = pd.DataFrame(data = {
-        "y_train": y_train,
-        "y_train_pred": y_train_pred
-    })
-    scatter_train.to_csv(
-        results_dir.joinpath("scatter_train.csv"),
-        encoding = "utf-8", index = False
-    )
-    print("Accuracy on train set: ", train_accuracy)
-    #-------------------------------------------------------
-
-    accuracy_dict = dict({
-        "test_accuracy": test_accuracy,
-        "train_accuracy": train_accuracy
-    })
-    with open(results_dir.joinpath("accuracy.yml"), 'w', encoding = "utf-8") as file:
-        yaml.dump(accuracy_dict, file)
+    # Output the test and train data, accuracy metrics, and scatter plot for testing.
+    accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir)
+    
     ########################################################
 
     return best_model
