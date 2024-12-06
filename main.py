@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from data.dataLoader import dataLoader
 from myshap import myshap
-
-
 from models import regressor
 
 file_path = "data/data.csv"         # Where to load data
