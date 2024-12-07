@@ -2,12 +2,12 @@ import numpy as np
 import pandas as pd
 from data.dataLoader import dataLoader
 from myshap import myshap
-from models import regressor
+from myregressors import regr
 
 file_path = "data/data.csv"         # Where to load data
 y_index = 0                         # Choose the index as dependency (y)
 x_index_list = range(1, 16)         # Choose the index as independency (x)
-model = "lgb"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
+model = "cat"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
 results_dir = "results/"            # Use the model name as the results dir, you can also pass the pathlib object
 trials = 100                        # How many trials to execute in optuna hyperparameters turning.
 test_ratio = 0.3                    # Ratio for test in the whole dataset.
@@ -21,7 +21,7 @@ def main():
     # Data preparing
     x_train, x_test, y_train, y_test = dataLoader(
         file_path = file_path,
-        y_index = 0, 
+        y_index = 0,
         x_index_list = x_index_list,
         test_ratio = test_ratio,
         random_state = random_state
@@ -30,7 +30,7 @@ def main():
 
     ###########################################################################
     # Execute machine learning
-    best_model = regressor(
+    best_model = regr(
         x_train, x_test, y_train, y_test,
         model = model,
         cv = cross_valid,

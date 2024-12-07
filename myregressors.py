@@ -179,7 +179,7 @@ def GBDT(_x_train, _y_train, _cv, _trials, _random_state):
 
 
 ###############################################################################
-def regressor(x_train, x_test, y_train, y_test,  # Input train and test data
+def regr(x_train, x_test, y_train, y_test,  # Input train and test data
        model,                             # Model selection
        cv,                                # Cross-validation for 6 times
        random_state,                      # Global random state setting
