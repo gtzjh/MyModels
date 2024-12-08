@@ -46,6 +46,8 @@ Models Supported:
 
 ## 1. Prepare environment (On Windows platform)
 
+**Please use Python 3.10**
+
 *About 1.75 GiB storage would be used.*
 
 conda
@@ -128,6 +130,8 @@ Run the `main.py` .
 
 ## 1. 环境准备（Windows平台，其余平台同理）
 
+**使用 Python 3.10**
+
 *环境安装大约使用1.75 GiB存储空间*
 
 conda
@@ -155,7 +159,7 @@ file_path = "data/data.csv"     # 选择数据文件
 y_index = 0                     # 哪一列是因变量 y
 x_index_list = range(1, 16)     # 哪一列是自变量 x
 model = "rf"                    # 模型选择: "lgb", "cat", "rf", "dt"，分别代表 LightGBM，CatBoost，Random Forest，Decision Tree。
-results_dir = "results/"        # 所有结果保存的文件夹，可自行修改。默认为在 results文件夹下创建与模型缩写同名的文件夹。 you can also pass the pathlib object
+results_dir = "results/"        # 所有结果保存的文件夹，可自行修改。默认为在 results文件夹下创建与模型缩写同名的文件夹。 可以自定义结果输出的文件夹
 trials = 100                    # 使用Optuna调参，执行多少个Trials，次数越多，将会遍历更多的超参数可能性。默认为50，如无必要无需修改。
 test_ratio = 0.3                # 使用多少数据作为测试
 shap_ratio = 0.3                # 使用多少样本计算SHAP值。默认为10%。增加这一值将会需要更长的运行时间，但可以得到相对更加精确的结果，反之亦然。

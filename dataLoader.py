@@ -15,10 +15,10 @@ def dataLoader(
     y_data = _df.iloc[:, y_index]
     x_data = _df.iloc[:, x_index_list]
 
-    print("\nDependency data:")
+    print("\nDependency:")
     print(y_data.describe())
 
-    print("\nIndependency data:")
+    print("\nIndependency:")
     print(x_data.describe())
 
     # x_train, x_test, y_train, y_test

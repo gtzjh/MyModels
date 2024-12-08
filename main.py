@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
-from data.dataLoader import dataLoader
+from dataLoader import dataLoader
 from myshap import myshap
 from myregressors import regr
 
-file_path = "data/data.csv"         # Where to load data
+
+file_path = "data.csv"              # Where to load data
 y_index = 0                         # Choose the index as dependency (y)
 x_index_list = range(1, 16)         # Choose the index as independency (x)
 model = "cat"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
