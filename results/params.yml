@@ -1,0 +1,11 @@
+bagging_temperature: 0.8819295748359297
+colsample_bylevel: 0.28755780167757206
+iterations: 1700
+l2_leaf_reg: 3.38444581486947
+leaf_estimation_iterations: 2
+learning_rate: 0.019325690294661624
+max_depth: 3
+min_data_in_leaf: 92
+random_state: 0
+subsample: 0.11829232560159939
+verbose: 0
