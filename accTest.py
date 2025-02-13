@@ -68,8 +68,6 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
                                         "y_test_pred": y_test_pred})
     train_results = pd.DataFrame(data = {"y_train": y_train,
                                          "y_train_pred": y_train_pred})
-    # test_results.to_csv(results_dir.joinpath("test_results.csv"), encoding = "utf-8", index = False)
-    # train_results.to_csv(results_dir.joinpath("train_results.csv"), encoding = "utf-8", index = False)
     ###########################################################################
 
 

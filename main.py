@@ -52,7 +52,7 @@ if __name__ == "__main__":
         x_list = list(range(1, 15)),         # Choose the index as independency (x), you can also pass a list of string of variables' name
         model = "cat",                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
         results_dir = "results/",            # Use the model name as the results dir, you can also pass the pathlib object
-        trials = 5,                          # How many trials to execute in optuna hyperparameters turning.
+        trials = 200,                        # How many trials to execute in optuna hyperparameters turning.
         test_ratio = 0.3,                    # Ratio for test in the whole dataset.
         shap_ratio = 0.3,                    # Use 30% of the whole dataset for SHAP calculation.
         cross_valid = 5,                     # Cross validation in optuna hyperparameters turning.

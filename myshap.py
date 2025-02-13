@@ -24,7 +24,7 @@ def myshap(best_model, shap_data, results_dir):
 
     # Partial Dependency Plot
     """
-    注意: Partial Dependency Plot(PDP)的纵坐标是预测值,横坐标是自变量
+    Partial Dependency Plot(PDP)的纵坐标是预测值,横坐标是自变量
     SHAP自带的scatter plot是基于SHAP值的,纵坐标是SHAP值,横坐标是自变量
     SHAP自带的dependence plot是基于SHAP值的,纵坐标是SHAP值,横坐标是自变量
     """

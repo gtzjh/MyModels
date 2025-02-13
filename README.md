@@ -7,90 +7,70 @@
 
 # English Documentation
 
-**Store my machine learning and SHAP (SHapley Additive exPlanations) codes.**
+**Machine learning pipeline with automated hyperparameter tuning using Optuna and model interpretation with SHAP (SHapley Additive exPlanations).**
 
-**DO REMEMBER: All models are wrong, but some are useful.**
+**Remember: All models are wrong, but some are useful. - George Box**
 
-*For regression task only currently.*
+*Currently supports regression tasks only.*
 
-Models Supported:
+Supported Models with Hyperparameter Optimization:
 
 1. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
-
 2. [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
-
-3. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
-
-4. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-
-5. [GBDT](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
-
-## 0. Former knowledge
-
-1. Familiar with Python programming. [Liao Xuefeng's tutorial](https://liaoxuefeng.com/books/python/introduction/index.html) provides a very good guide to get started. It is recommended to learn **section 17**. Common built-in modules can be used, and **focus on section 7,8,9,10,11**. Try to complete the exercises after each lesson. Finally, you must test your learning results with a practical project [(Here is my demon)](https://github.com/gtzjh/WundergroundSpider), such as designing a crawler or implementing some small functions. Please do not use ChatGPT at this stage, but you can write it later and ask it to give suggestions for code optimization to improve yourself.
-
-2. Fundamentals of machine learning. [CS229](https://www.bilibili.com/video/BV1JE411w7Ub) from Dr. Andrew Ng is a perfect tutorials.
-
-3. Other
-   
-    Understand how to create and manage environments with conda and pip ** and understand how to use it in editors (VSCode, etc.)
-
-    **Understand how to use Terminal**
-
-    It is recommended to learn to use Git [Here is my little demon](https://github.com/gtzjh/learngit), try to build a project on GitHub yourself and learn to use it to manage the code.
-
-    VScode is recommended.
-    
-    *Personally I don't recommend PyCharm, there are too many fancy features. It is also not recommended to use a Jupyter Notebook or Jupyterlab because it is easy to write less than smooth and elegant code.*
+3. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+4. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
+5. [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
 
-## 1. Prepare environment (On Windows platform)
+## 0. Prerequisites
 
-**Please use Python 3.10**
+1. Python programming proficiency. Recommended resource: [Liao Xuefeng's Python Tutorial](https://liaoxuefeng.com/books/python/introduction/index.html) (Focus on sections 7-11 and 17)
+2. Machine learning fundamentals. Recommended course: [CS229 by Andrew Ng](https://www.bilibili.com/video/BV1JE411w7Ub)
+3. Environment management:
+   - Conda/Pip package management
+   - Terminal/Command Line proficiency
+   - Git version control ([Example project](https://github.com/gtzjh/learngit))
+   - Recommended IDE: Visual Studio Code
 
-*About 1.75 GiB storage would be used.*
+## 1. Environment Setup (Windows)
 
-conda
+**Python 3.10 required**  
+*Approximately 1.75 GiB disk space required*
 
+Using Conda:
 ```bash
 conda env create -f env-win.yml -n mymodels
-```
-
-
-```bash
 conda activate mymodels
 ```
 
-Or use the `pip3` when the `conda` command is not available.
-
+Using Pip:
 ```bash
 pip install -r env-win.txt
 ```
 
 ## 2. Usage
 
-Change the following content in `main.py` to meet your requirements.
+Configure parameters in `main.py`:
 
 ```python
-file_path = "data.csv"              # Where to load data
-y = 0                               # Choose the index as dependency (y)，, you can also pass string of variables' name
-x_list = list(range(2, 15))         # Choose the index as independency (x), you can also pass a list of string of variables' name
-model = "lgb"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
-results_dir = "results/"            # Use the model name as the results dir, you can also pass the pathlib object
-trials = 100                        # How many trials to execute in optuna hyperparameters turning.
-test_ratio = 0.3                    # Ratio for test in the whole dataset.
-shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
-cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
-random_state = 0                    # Global random state control, for model training, cross validation turning, and testing.
+file_path = "data.csv"              # Dataset path (CSV format)
+y = 0                               # Target variable index/name
+x_list = list(range(2, 15))         # Feature indices/names
+model = "lgb"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt"
+results_dir = "results/"            # Output directory (pathlib.Path compatible)
+trials = 100                        # Optuna optimization trials
+test_ratio = 0.3                    # Proportion of dataset to use as test set
+shap_ratio = 0.3                    # Dataset proportion for SHAP analysis
+cross_valid = 5                     # Cross-validation folds during optimization
+random_state = 0                    # Random seed for reproducibility
 ```
 
-Run main.py 。(In terminal or in Debug mode)
-
+Execute the pipeline:
 ```bash
 python main.py
 ```
 
-************************************************************************************************************************************************************
+
 
 # 中文使用说明
 
@@ -103,14 +83,10 @@ python main.py
 本项目包含的模型：
 
 1. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
-
 2. [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
-
-3. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
-
-4. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-
-5. [GBDT](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+3. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+4. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
+5. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
 
 ## 0. 前置知识
@@ -142,7 +118,7 @@ python main.py
 conda
 
 ```bash
-conda env create -f env.yml -n mymodels
+conda env create -f env-win.yml -n mymodels
 ```
 
 ```bash
@@ -152,7 +128,7 @@ conda activate mymodels
 如果无法使用conda，则使用pip
 
 ```bash
-pip install -r win-env.txt
+pip install -r env-win.txt
 ```
 
 ## 2. 使用
@@ -160,16 +136,16 @@ pip install -r win-env.txt
 根据自己需要修改 `main.py` 中的以下内容：
 
 ```python
-file_path = "data.csv"              # Where to load data
-y = 0                               # Choose the index as dependency (y)，, you can also pass string of variables' name
-x_list = list(range(2, 15))         # Choose the index as independency (x), you can also pass a list of string of variables' name
-model = "lgb"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
-results_dir = "results/"            # Use the model name as the results dir, you can also pass the pathlib object
-trials = 100                        # How many trials to execute in optuna hyperparameters turning.
-test_ratio = 0.3                    # Ratio for test in the whole dataset.
-shap_ratio = 0.3                    # Use 30% of the whole dataset for SHAP calculation.
-cross_valid = 5                     # Cross validation in optuna hyperparameters turning.
-random_state = 0                    # Global random state control, for model training, cross validation turning, and testing.
+file_path = "data.csv"              # 数据文件路径
+y = 0                               # 选择因变量（y）的列索引，也可以传入变量名字符串
+x_list = list(range(2, 15))         # 选择自变量（x）的列索引列表，也可以传入变量名字符串列表
+model = "lgb"                       # 模型选择："lgb"、"cat"、"rf"、"dt"、"gbdt"
+results_dir = "results/"            # 结果保存目录，可以使用模型名称作为目录名，也可以传入pathlib对象
+trials = 100                        # Optuna超参数优化的尝试次数
+test_ratio = 0.3                    # 测试集占总数据集的比例（占总数据集的30%）
+shap_ratio = 0.3                    # 用于SHAP值计算的数据比例（占总数据集的30%）
+cross_valid = 5                     # Optuna超参数优化时的交叉验证折数
+random_state = 0                    # 全局随机种子，用于控制模型训练、交叉验证和测试的随机性
 ```
 
 运行 main.py 。(命令行中或用Debug模式)
