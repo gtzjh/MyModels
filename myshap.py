@@ -7,28 +7,59 @@ shap.initjs()
 plt.rc('font', family = 'Times New Roman')
 
 
-def myshap(best_model, shap_data, results_dir):
+
+def myshap(best_model, model_type, shap_data, results_dir):
     assert isinstance(shap_data, pd.DataFrame)
     assert isinstance(results_dir, pathlib.Path) or isinstance(results_dir, str)
     results_dir = pathlib.Path(results_dir)
     results_dir.mkdir(parents = True, exist_ok = True)
 
+    # Set different explainers for different models
+    if model_type in ["ada"]:
+        # For KernelExplainer, need to pass prediction function and data
+        explainer = shap.KernelExplainer(best_model.predict, shap_data)
+        shap_values = explainer.shap_values(shap_data)
+    else:
+        # For TreeExplainer
+        explainer = shap.TreeExplainer(best_model)
+        shap_values = explainer.shap_values(shap_data)
+
     # Summary plot
-    explainer = shap.TreeExplainer(best_model)
-    shap_values = explainer(shap_data)
     shap.summary_plot(shap_values, shap_data, show = False)
     plt.tight_layout()
     plt.savefig(results_dir.joinpath('shap_summary.jpg'), dpi = 500)
     plt.close()
 
+    """
+    SHAP Visualization Functions Comparison:
+    
+    1. shap.partial_dependence_plot:
+    - Shows average marginal effect of a feature on model output
+    - Similar to traditional Partial Dependence Plot (PDP)
+    - X-axis: Feature values, Y-axis: Predicted values
+    
+    2. shap.dependence_plot:
+    - Shows relationship between feature values and SHAP values
+    - Automatically detects interactions (color-codes 2nd influential feature)
+    - X-axis: Feature values, Y-axis: SHAP values
+    
+    3. shap.scatter_plot:
+    - Basic SHAP value visualization
+    - Requires manual specification of x/y axes
+    - No automatic interaction detection
+    
+    Key Differences:
+    | Function                | Data Source     | SHAP Values | Auto-Interaction | Output Scale |
+    |-------------------------|-----------------|-------------|------------------|--------------|
+    | partial_dependence_plot | Raw feature     | ❌          | ❌              | Prediction   |
+    | dependence_plot         | Raw + SHAP      | ✅          | ✅              | SHAP         |
+    | scatter_plot            | SHAP values     | ✅          | ❌              | SHAP         |
+    
+    Recommendation: Use dependence_plot for most cases, scatter_plot for custom combinations
+    """
 
     # Partial Dependency Plot
-    """
-    Partial Dependency Plot(PDP)的纵坐标是预测值,横坐标是自变量
-    SHAP自带的scatter plot是基于SHAP值的,纵坐标是SHAP值,横坐标是自变量
-    SHAP自带的dependence plot是基于SHAP值的,纵坐标是SHAP值,横坐标是自变量
-    """
-    results_dir.joinpath("PDP").mkdir(parents = True, exist_ok = True)  # Create the dir if not exists
+    results_dir.joinpath("partial_dependence_plots").mkdir(parents = True, exist_ok = True)
     for _feature_name in shap_data.columns:
         shap.partial_dependence_plot(
             _feature_name,
@@ -40,7 +71,21 @@ def myshap(best_model, shap_data, results_dir):
             show = False
         )
         plt.tight_layout()
-        plt.savefig(results_dir.joinpath("PDP").joinpath(_feature_name + '.jpg'), dpi = 500)
+        plt.savefig(results_dir.joinpath("partial_dependence_plots").joinpath(_feature_name + '.jpg'), dpi = 500)
+        plt.close()
+    
+    # Dependence Plot
+    results_dir.joinpath("dependence_plots").mkdir(parents = True, exist_ok = True)
+    for _feature_name in shap_data.columns:
+        shap.dependence_plot(
+            _feature_name,
+            shap_values,
+            shap_data,
+            show = False
+        )
+        plt.tight_layout()
+        plt.savefig(results_dir.joinpath("dependence_plots").joinpath(_feature_name + '.jpg'), dpi = 500)
         plt.close()
 
+    # There is no scatter plot here.
     return None

@@ -20,7 +20,8 @@ Supported Models with Hyperparameter Optimization:
 3. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
 4. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
 5. [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-
+6. [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
+7. [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
 
 ## 0. Prerequisites
 
@@ -43,11 +44,6 @@ conda env create -f env-win.yml -n mymodels
 conda activate mymodels
 ```
 
-Using Pip:
-```bash
-pip install -r env-win.txt
-```
-
 ## 2. Usage
 
 Configure parameters in `main.py`:
@@ -56,9 +52,9 @@ Configure parameters in `main.py`:
 file_path = "data.csv"              # Dataset path (CSV format)
 y = 0                               # Target variable index/name
 x_list = list(range(2, 15))         # Feature indices/names
-model = "lgb"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt"
+model = "ada"                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt", "xgb", "ada"
 results_dir = "results/"            # Output directory (pathlib.Path compatible)
-trials = 100                        # Optuna optimization trials
+trials = 50                         # Optuna optimization trials
 test_ratio = 0.3                    # Proportion of dataset to use as test set
 shap_ratio = 0.3                    # Dataset proportion for SHAP analysis
 cross_valid = 5                     # Cross-validation folds during optimization
@@ -87,8 +83,8 @@ python main.py
 3. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
 4. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
 5. [Catboost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-
-
+6. [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
+7. [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
 ## 0. 前置知识
 
 1. 熟悉Python编程。[廖雪峰老师的教程](https://liaoxuefeng.com/books/python/introduction/index.html)提供了非常好的入门指引，建议学到 17.常用内建模块即可，而对7，8，9，10，11则要重点掌握。每一节学完以后尝试去完成课后习题。最后，**一定要以一个实践项目来检验自己的学习成果**，比如设计一段爬虫，或是实现一些小功能等 [(这是我写的一个小爬虫)](https://github.com/gtzjh/WundergroundSpider)。请不要在这一阶段使用ChatGPT，但可以再写出来以后让其给出代码优化建议让自己进步。
@@ -125,12 +121,6 @@ conda env create -f env-win.yml -n mymodels
 conda activate mymodels
 ```
 
-如果无法使用conda，则使用pip
-
-```bash
-pip install -r env-win.txt
-```
-
 ## 2. 使用
 
 根据自己需要修改 `main.py` 中的以下内容：
@@ -139,9 +129,9 @@ pip install -r env-win.txt
 file_path = "data.csv"              # 数据文件路径
 y = 0                               # 选择因变量（y）的列索引，也可以传入变量名字符串
 x_list = list(range(2, 15))         # 选择自变量（x）的列索引列表，也可以传入变量名字符串列表
-model = "lgb"                       # 模型选择："lgb"、"cat"、"rf"、"dt"、"gbdt"
+model = "ada"                       # 模型选择："lgb"、"cat"、"rf"、"dt"、"gbdt"、"xgb"、"ada"
 results_dir = "results/"            # 结果保存目录，可以使用模型名称作为目录名，也可以传入pathlib对象
-trials = 100                        # Optuna超参数优化的尝试次数
+trials = 50                         # Optuna超参数优化的尝试次数
 test_ratio = 0.3                    # 测试集占总数据集的比例（占总数据集的30%）
 shap_ratio = 0.3                    # 用于SHAP值计算的数据比例（占总数据集的30%）
 cross_valid = 5                     # Optuna超参数优化时的交叉验证折数

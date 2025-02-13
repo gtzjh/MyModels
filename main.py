@@ -39,7 +39,7 @@ def main(file_path, y, x_list, model, results_dir, trials, test_ratio, shap_rati
             int(len(all_data) * shap_ratio),
             replace = False
         )]
-    myshap(best_model, shap_data, results_dir)
+    myshap(best_model, model, shap_data, results_dir)
     ###########################################################################
 
     return None
@@ -50,11 +50,11 @@ if __name__ == "__main__":
         file_path = "data.csv",              # Where to load data
         y = "y",                             # Choose the index as dependency (y)，, you can also pass string of variables' name
         x_list = list(range(1, 15)),         # Choose the index as independency (x), you can also pass a list of string of variables' name
-        model = "cat",                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt".
+        model = "xgb",                       # Model selection: "lgb", "cat", "rf", "dt", "gbdt", "xgb", "ada".
         results_dir = "results/",            # Use the model name as the results dir, you can also pass the pathlib object
-        trials = 200,                        # How many trials to execute in optuna hyperparameters turning.
+        trials = 50,                         # How many trials to execute in optuna hyperparameters turning.
         test_ratio = 0.3,                    # Ratio for test in the whole dataset.
-        shap_ratio = 0.3,                    # Use 30% of the whole dataset for SHAP calculation.
+        shap_ratio = 0.1,                    # Use 10% of the whole dataset for SHAP calculation.
         cross_valid = 5,                     # Cross validation in optuna hyperparameters turning.
         random_state = 0,                    # Global random state control, for model training, cross validation turning, and testing.
     )

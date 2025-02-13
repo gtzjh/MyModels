@@ -2,8 +2,6 @@ name: mymodels
 channels:
   - defaults
   - conda-forge
-  - https://repo.anaconda.com/pkgs/main
-  - https://repo.anaconda.com/pkgs/r
 dependencies:
   - alembic=1.14.1=pyhd8ed1ab_0
   - asttokens=2.0.5=pyhd3eb1b0_0

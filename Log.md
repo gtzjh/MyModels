@@ -4,6 +4,9 @@
 
 Adjusted the README.md.
 
+Added XGBoost and AdaBoost.
+
+Add the dependency plot for SHAP.
 
 ## 20250207
 
