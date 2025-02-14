@@ -1,0 +1,7 @@
+max_depth: 13
+max_features: 0.2
+min_samples_leaf: 1
+min_samples_split: 10
+n_estimators: 1500
+random_state: 0
+verbose: 0

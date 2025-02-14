@@ -1,0 +1,9 @@
+learning_rate: 0.001897922590969279
+max_depth: 4
+max_features: 0.30000000000000004
+min_samples_leaf: 5
+min_samples_split: 6
+n_estimators: 2000
+random_state: 0
+subsample: 0.2
+verbose: 0

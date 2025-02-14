@@ -1,0 +1,13 @@
+colsample_bytree: 0.5
+enable_categorical: false
+gamma: 4.0
+learning_rate: 0.0016284050221372513
+max_depth: 3
+min_child_weight: 7
+n_estimators: 2300
+reg_alpha: 0.4059784672262905
+reg_lambda: 4.575182336826744
+seed: 0
+subsample: 1.0
+tree_method: approx
+verbosity: 0

@@ -1,5 +1,8 @@
 import numpy as np
 import optuna
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neural_network import MLPRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
 import xgboost as xgb
@@ -46,6 +49,9 @@ class Regr:
             "xgb": (self._XGB, xgb.XGBRegressor),
             "lgb": (self._LGB, LGBMRegressor),
             "cat": (self._CAT, CatBoostRegressor),
+            "svr": (self._SVR, SVR),
+            "knr": (self._KNR, KNeighborsRegressor),
+            "mlp": (self._MLP, MLPRegressor),
         }
 
     ###########################################################################
@@ -56,7 +62,8 @@ class Regr:
             x_train (pd.DataFrame): Training features data
             y_train (pd.Series): Training target data
             model (str): 
-                Model selection, one of ["cat", "rf", "dt", "lgb", "gbdt", "xgb", "ada"]
+                Model selection,
+                must beone of ["cat", "rf", "dt", "lgb", "gbdt", "xgb", "ada", "svr", "knr", "mlp"]
             cat_features (list[str] or None): 
                 List of categorical feature names, if any
         Returns:
@@ -146,6 +153,51 @@ class Regr:
 
 
     ###########################################################################
+    def _SVR(self) -> tuple[optuna.Study, dict]:
+        """Optimize Support Vector Regression model."""
+        param_space = {
+            "kernel": lambda t: t.suggest_categorical("kernel", ["linear", "rbf", "poly", "sigmoid"]),
+            "C": lambda t: t.suggest_float("C", 0.1, 100, log=True),
+            "epsilon": lambda t: t.suggest_float("epsilon", 0.01, 1.0, step=0.01),
+        }
+        static_params = {
+            "n_jobs": -1,
+        }
+        return self._optimizer(SVR, param_space, static_params)
+    
+    def _KNR(self) -> tuple[optuna.Study, dict]:
+        """Optimize K-Nearest Neighbors Regression model."""
+        param_space = {
+            "n_neighbors": lambda t: t.suggest_int("n_neighbors", 1, 100, step=1),
+            "weights": lambda t: t.suggest_categorical("weights", ["uniform", "distance"]),
+            "leaf_size": lambda t: t.suggest_int("leaf_size", 1, 100, step=1),
+            "p": lambda t: t.suggest_int("p", 1, 5, step=1),
+        }
+        static_params = {
+            "n_jobs": -1,
+        }
+        return self._optimizer(KNeighborsRegressor, param_space, static_params)
+    
+    def _MLP(self) -> tuple[optuna.Study, dict]:
+        """Optimize Multi-Layer Perceptron Regression model."""
+        param_space = {
+            "hidden_layer_sizes": lambda t: t.suggest_categorical("hidden_layer_sizes", [(100,), (100,), (100,)]),
+            "activation": lambda t: t.suggest_categorical("activation", ["relu", "tanh", "logistic"]), 
+            # "solver": lambda t: t.suggest_categorical("solver", ["lbfgs", "sgd", "adam"]),
+            "alpha": lambda t: t.suggest_float("alpha", 0.0001, 0.1, log=True),
+            # "batch_size": lambda t: t.suggest_categorical("batch_size", ["auto", "full"]),
+            # "learning_rate": lambda t: t.suggest_categorical("learning_rate", ["constant", "invscaling", "adaptive"]),
+            "learning_rate_init": lambda t: t.suggest_float("learning_rate_init", 0.0001, 0.1, log=True),
+            "max_iter": lambda t: t.suggest_int("max_iter", 100, 1000, step=100),
+        }
+        static_params = {
+            "random_state": self.random_state,
+            "verbose": 0,
+            # "n_jobs": -1,
+        }
+        return self._optimizer(MLPRegressor, param_space, static_params)
+
+
     def _DT(self) -> tuple[optuna.Study, dict]:
         """Optimize Decision Tree model."""
         param_space = {

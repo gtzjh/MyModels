@@ -63,8 +63,8 @@ def main(file_path, y, x_list, model, results_dir,
 if __name__ == "__main__":
     
     for i in [
-        "dt", "rf", "gbdt", "xgb", "lgb", "cat",
-        "ada",
+        # "dt", "rf", "gbdt", "xgb", "lgb", "cat", "ada",
+        "svr", "knr", "mlp",
     ]:
         print(f"{i} started")
         main(
