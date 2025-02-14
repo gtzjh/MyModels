@@ -1,6 +1,14 @@
 # Log
 
+## 20250214
+
+Fixed the bug of the reproducible optimization process.
+
+Added the static parameters for the optimization process.
+
 ## 20250213
+
+Support the categorical features.
 
 Adjusted the README.md.
 

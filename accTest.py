@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score, root_mean_squared_error, mean_absolute_error
-import yaml, pathlib
+import yaml, pathlib, json
 
 
 plt.rc('font', family = 'Times New Roman')
@@ -83,7 +83,8 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     })
     with open(results_dir.joinpath("accuracy.yml"), 'w', encoding = "utf-8") as file:
         yaml.dump(accuracy_dict, file)
-    print(accuracy_dict)
+    print("Accuracy:")
+    print(json.dumps(accuracy_dict, indent=4))
     ###########################################################################
 
 
