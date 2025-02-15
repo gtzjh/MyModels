@@ -6,6 +6,10 @@ Fixed the bug of the reproducible optimization process.
 
 Added the static parameters for the optimization process.
 
+Added SVR, KNR, and MLP.
+
+Adjusted the regressor structure to OOP.
+
 ## 20250213
 
 Support the categorical features.

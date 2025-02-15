@@ -50,7 +50,7 @@ def _plot(_r2_value, _rmse_value, _mae_value, _y, _y_pred, _results_dir):
 
 
 # 输出精度结果
-def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
+def accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     ###########################################################################
     # Check variables' type
     assert isinstance(y_test, pd.DataFrame) or isinstance(y_test, pd.Series) or isinstance(y_test, np.ndarray)
@@ -61,7 +61,6 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     results_dir = pathlib.Path(results_dir)
     ###########################################################################
 
-
     ###########################################################################
     # Output train and test results
     test_results = pd.DataFrame(data = {"y_test": y_test,
@@ -69,7 +68,6 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     train_results = pd.DataFrame(data = {"y_train": y_train,
                                          "y_train_pred": y_train_pred})
     ###########################################################################
-
 
     ###########################################################################
     # Accuracy
@@ -86,7 +84,6 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     print("Accuracy:")
     print(json.dumps(accuracy_dict, indent=4))
     ###########################################################################
-
 
     ###########################################################################
     # Plot
@@ -105,7 +102,7 @@ def accTest(y_test, y_test_pred, y_train, y_train_pred, results_dir):
 if __name__ == "__main__":
     scatter_test = pd.read_csv("results/rf/scatter_test.csv", encoding = "utf-8")
     scatter_train = pd.read_csv("results/rf/scatter_train.csv", encoding = "utf-8")
-    accTest(
+    accuracy_regrs(
         y_test = scatter_test["y_test"],
         y_test_pred = scatter_test["y_test_pred"],
         y_train = scatter_train["y_train"],

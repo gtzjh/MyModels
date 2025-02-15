@@ -3,6 +3,7 @@ catboost_info/
 .DS_Store
 AutogluonModels/
 
+results/
 
 # Byte-compiled / optimized / DLL files
 __pypackages__/

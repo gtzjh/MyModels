@@ -9,8 +9,8 @@ import xgboost as xgb
 from lightgbm import LGBMRegressor
 from catboost import CatBoostRegressor
 from sklearn.model_selection import cross_val_score, KFold
-import yaml, pathlib, json
-from accTest import accTest
+import yaml, pathlib
+from accuracy_regrs import accuracy_regrs
 from optuna.samplers import TPESampler
 
 
@@ -108,14 +108,14 @@ class Regr:
         # Evaluate and save results
         y_test_pred = opt_model.predict(x_test)    # Accuracy on testing set
         y_train_pred = opt_model.predict(x_train)  # Accuracy on training set
-        accTest(y_test, y_test_pred, y_train, y_train_pred, self.results_dir)
+        accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, self.results_dir)
         
         return None
     ###########################################################################
 
 
     ###########################################################################
-    def _optimizer(self, _model, _param_space, _static_params = None) -> tuple[optuna.Study, dict]:
+    def _optimizer(self, _model, _param_space, _static_params = None) -> tuple[optuna.Study, None|dict]:
         """
         Internal method for model optimization using optuna.
         Parameters:
@@ -153,20 +153,22 @@ class Regr:
 
 
     ###########################################################################
+    """Optimize Support Vector Regression model."""
     def _SVR(self) -> tuple[optuna.Study, dict]:
-        """Optimize Support Vector Regression model."""
         param_space = {
             "kernel": lambda t: t.suggest_categorical("kernel", ["linear", "rbf", "poly", "sigmoid"]),
             "C": lambda t: t.suggest_float("C", 0.1, 100, log=True),
             "epsilon": lambda t: t.suggest_float("epsilon", 0.01, 1.0, step=0.01),
         }
         static_params = {
-            "n_jobs": -1,
+            "verbose": 0,
         }
         return self._optimizer(SVR, param_space, static_params)
-    
+    ###########################################################################
+
+    ###########################################################################
+    """Optimize K-Nearest Neighbors Regression model."""
     def _KNR(self) -> tuple[optuna.Study, dict]:
-        """Optimize K-Nearest Neighbors Regression model."""
         param_space = {
             "n_neighbors": lambda t: t.suggest_int("n_neighbors", 1, 100, step=1),
             "weights": lambda t: t.suggest_categorical("weights", ["uniform", "distance"]),
@@ -177,29 +179,30 @@ class Regr:
             "n_jobs": -1,
         }
         return self._optimizer(KNeighborsRegressor, param_space, static_params)
-    
+    ###########################################################################
+
+    ###########################################################################
+    """Optimize Multi-Layer Perceptron Regression model."""
     def _MLP(self) -> tuple[optuna.Study, dict]:
-        """Optimize Multi-Layer Perceptron Regression model."""
         param_space = {
-            "hidden_layer_sizes": lambda t: t.suggest_categorical("hidden_layer_sizes", [(100,), (100,), (100,)]),
-            "activation": lambda t: t.suggest_categorical("activation", ["relu", "tanh", "logistic"]), 
-            # "solver": lambda t: t.suggest_categorical("solver", ["lbfgs", "sgd", "adam"]),
             "alpha": lambda t: t.suggest_float("alpha", 0.0001, 0.1, log=True),
-            # "batch_size": lambda t: t.suggest_categorical("batch_size", ["auto", "full"]),
-            # "learning_rate": lambda t: t.suggest_categorical("learning_rate", ["constant", "invscaling", "adaptive"]),
             "learning_rate_init": lambda t: t.suggest_float("learning_rate_init", 0.0001, 0.1, log=True),
-            "max_iter": lambda t: t.suggest_int("max_iter", 100, 1000, step=100),
+            "max_iter": lambda t: t.suggest_int("max_iter", 100, 3000, step = 100),
         }
         static_params = {
+            "hidden_layer_sizes": (100, 100, 100),
+            "activation": "relu",
+            "solver": "adam",
+            "batch_size": "auto",
             "random_state": self.random_state,
-            "verbose": 0,
-            # "n_jobs": -1,
+            "verbose": 0
         }
         return self._optimizer(MLPRegressor, param_space, static_params)
+    ###########################################################################
 
-
+    ###########################################################################
+    """Optimize Decision Tree model."""
     def _DT(self) -> tuple[optuna.Study, dict]:
-        """Optimize Decision Tree model."""
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 2, 20),
             "min_samples_split": lambda t: t.suggest_int("min_samples_split", 2, 20),
@@ -208,9 +211,12 @@ class Regr:
         }
         static_params = {"random_state": self.random_state}
         return self._optimizer(DecisionTreeRegressor, param_space, static_params)
+    ###########################################################################
 
+
+    ###########################################################################
+    """Optimize Random Forest model."""
     def _RF(self) -> tuple[optuna.Study, dict]:
-        """Optimize Random Forest model."""
         param_space = {
             "n_estimators": lambda t: t.suggest_int("n_estimators", 100, 3000, step=100),
             "max_depth": lambda t: t.suggest_int("max_depth", 1, 15),
@@ -223,9 +229,11 @@ class Regr:
             "verbose": 0,
         }
         return self._optimizer(RandomForestRegressor, param_space, static_params)
+    ###########################################################################
 
+    ###########################################################################
+    """Optimize Gradient Boosting model."""
     def _GBDT(self) -> tuple[optuna.Study, dict]:
-        """Optimize Gradient Boosting model."""
         param_space = {
             "learning_rate": lambda t: t.suggest_float("learning_rate", 1e-8, 1.0, log=True),
             "n_estimators": lambda t: t.suggest_int("n_estimators", 100, 3000, step=100),
@@ -240,9 +248,11 @@ class Regr:
             "verbose": 0,
         }
         return self._optimizer(GradientBoostingRegressor, param_space, static_params)
+    ###########################################################################
 
+    ###########################################################################
+    """Optimize AdaBoost model."""
     def _ADA(self) -> tuple[optuna.Study, dict]:
-        """Optimize AdaBoost model."""
         param_space = {
             "n_estimators": lambda t: t.suggest_int("n_estimators", 100, 3000, step=100),
             "learning_rate": lambda t: t.suggest_float("learning_rate", 0.01, 1.0, log=True),
@@ -252,9 +262,11 @@ class Regr:
             "random_state": self.random_state,
         }
         return self._optimizer(AdaBoostRegressor, param_space, static_params)
+    ###########################################################################
 
+    ###########################################################################
+    """Optimize XGBoost model."""
     def _XGB(self) -> tuple[optuna.Study, dict]:
-        """Optimize XGBoost model."""
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 1, 15),
             "learning_rate": lambda t: t.suggest_float("learning_rate", 1e-8, 1.0, log=True),
@@ -273,9 +285,11 @@ class Regr:
             "verbosity": 0,
         }
         return self._optimizer(xgb.XGBRegressor, param_space, static_params)
+    ###########################################################################
 
+    ###########################################################################
+    """Optimize LightGBM model."""
     def _LGB(self) -> tuple[optuna.Study, dict]:
-        """Optimize LightGBM model."""
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 1, 15),
             "learning_rate": lambda t: t.suggest_float("learning_rate", 1e-8, 1.0, log=True),
@@ -294,8 +308,9 @@ class Regr:
         }
         return self._optimizer(LGBMRegressor, param_space, static_params)
 
+    ###########################################################################
+    """Optimize CatBoost model."""
     def _CAT(self) -> tuple[optuna.Study, dict]:
-        """Optimize CatBoost model."""
         param_space = {
             "iterations": lambda t: t.suggest_int("iterations", 100, 3000, step=100),
             "learning_rate": lambda t: t.suggest_float("learning_rate", 1e-5, 1.0, log=True),

@@ -7,7 +7,7 @@ from myregressors import Regr
 
 def main(file_path, y, x_list, model, results_dir,
          cat_features = None,
-         trials = 100,
+         trials = 50,
          test_ratio = 0.3,
          shap_ratio = 0.3,
          cross_valid = 5,
@@ -68,13 +68,13 @@ if __name__ == "__main__":
     ]:
         print(f"{i} started")
         main(
-            file_path = "data2.csv",
+            file_path = "data.csv",
             y = "y",
             x_list = list(range(1, 16)),
             model = i,
             results_dir = "results/" + i,
             # cat_features = ["x16", "x17"],
-            trials = 100,
+            trials = 50,
             test_ratio = 0.3,
             shap_ratio = 0.3,
             cross_valid = 5,
