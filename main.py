@@ -67,16 +67,23 @@ class MLPipeline:
 
     """Optimize and evaluate the model"""
     def optimize(self):
-        optimizer = Regr(
-            cv=self.cross_valid,
-            random_state=self.random_state,
-            trials=self.trials,
-            results_dir=self.results_dir,
-        )
-        self.optimal_model = optimizer.fit(self.x_train, self.y_train, 
-                                           self.model, self.cat_features)
-        optimizer.evaluate(self.optimal_model, self.x_test, self.y_test, 
-                           self.x_train, self.y_train)
+        try:
+            optimizer = Regr(
+                cv=self.cross_valid,
+                random_state=self.random_state,
+                trials=self.trials,
+                results_dir=self.results_dir,
+            )
+            self.optimal_model = optimizer.fit(self.x_train, self.y_train, 
+                                             self.model, self.cat_features)
+            optimizer.evaluate(self.optimal_model, self.x_test, self.y_test, 
+                             self.x_train, self.y_train)
+        except Exception as e:
+            with open("error.txt", "w") as f:
+                f.write(f"Model type: {self.model}\n")
+                f.write(f"Time: {pd.Timestamp.now()}\n")
+                f.write(f"Error: Model optimization failed: {str(e)}\n")
+            raise RuntimeError(f"Model optimization failed: {str(e)}")
         
     """Use SHAP for explanation"""
     def explain(self):
@@ -101,22 +108,27 @@ class MLPipeline:
 
 if __name__ == "__main__":
     for i in [
-        "svr", "knr", "mlp", "ada", # The use kernel explaination in SHAP, which will be very slow in the case of large dataset.
-        "dt", "rf", "gbdt", "xgb", "lgb", "cat",  # Tree-based explaination in SHAP, which will be faster.
+        "svr", "knr", "mlp", "ada",
+        "dt", "rf", "gbdt", "xgb", "lgb", "cat",
     ]:
-        print(f"{i} started")
-        the_model = MLPipeline(
-            file_path = "data.csv",
-            y = "y",
-            x_list = list(range(1, 16)),
-            model = i,
-            results_dir = "results/" + i,
-            cat_features = None,
-            trials = 100,
-            test_ratio = 0.3,
-            shap_ratio = 0.2,
-            cross_valid = 5,
-            random_state = 0,
-        )
-        the_model.run()
-        print(f"{i} finished")
+        try:
+            the_model = MLPipeline(
+                file_path = "data.csv",
+                y = "y",
+                x_list = list(range(1, 16)),
+                model = i,
+                results_dir = "results/" + i,
+                cat_features = None,
+                trials = 100,
+                test_ratio = 0.3,
+                shap_ratio = 0.2,
+                cross_valid = 5,
+                random_state = 0,
+            )
+            the_model.run()
+        except Exception as e:
+            with open("error.txt", "w") as f:
+                f.write(f"Model type: {i}\n")
+                f.write(f"Time: {pd.Timestamp.now()}\n") 
+                f.write(f"Error: {str(e)}\n")
+            continue

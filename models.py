@@ -14,6 +14,7 @@ import yaml, pathlib
 from accuracy import RegrAccuracy
 
 
+
 """A class for training and optimizing various regression models."""
 class Regr:
     def __init__(self, cv: int, random_state: int, trials: int, results_dir: str | pathlib.Path):
@@ -47,7 +48,7 @@ class Regr:
         }
 
     ###########################################################################
-    def fit(self, x_train, y_train, model: str, cat_features = None | list[str]) -> optuna.Study:
+    def fit(self, x_train, y_train, model: str, cat_features = None | list[str]) -> any:
         """
         Train and optimize a regression model.
         Parameters:
@@ -59,10 +60,16 @@ class Regr:
             cat_features (list[str] or None): 
                 List of categorical feature names, if any
         Returns:
-            opt_model (optuna.Study): The optimized model
+            opt_model (any): The optimized model
         """
         assert model in self.MODEL_MAP, \
             f"Invalid model selection: {model}, it must be one of {list(self.MODEL_MAP.keys())}"
+        
+        # Add data validation
+        if len(x_train) != len(y_train):
+            raise ValueError("x_train and y_train must have the same length")
+        if cat_features is not None and not all(feat in x_train.columns for feat in cat_features):
+            raise ValueError("All categorical features must exist in x_train")
         
         self.x_train = x_train
         self.y_train = y_train
@@ -70,7 +77,7 @@ class Regr:
         
         study_func, use_model = self.MODEL_MAP[model]
         study, static_params = study_func()
-        opt_params = {**study.best_trial.params, **static_params}
+        opt_params = {**static_params, **study.best_trial.params}
         
         # Train model with optimal parameters
         opt_model = use_model(**opt_params)
@@ -105,7 +112,7 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    def _optimizer(self, _model, _param_space, _static_params = None) -> tuple[optuna.Study, None|dict]:
+    def _optimizer(self, _model, _param_space, _static_params=None) -> tuple[optuna.Study, None|dict]:
         """
         Internal method for model optimization using optuna.
         Parameters:
@@ -113,7 +120,9 @@ class Regr:
             _param_space: The parameter space to optimize
             _static_params: Static parameters for the model
         """
-        assert _static_params is None or isinstance(_static_params, dict)
+        if _static_params is None:
+            _static_params = {}
+        assert isinstance(_static_params, dict)
         
         def _objective(trial):
             param = {
@@ -168,8 +177,7 @@ class Regr:
         param_space = {
             "n_neighbors": lambda t: t.suggest_int("n_neighbors", 1, 100, step=1),
             "weights": lambda t: t.suggest_categorical("weights", ["uniform", "distance"]),
-            "leaf_size": lambda t: t.suggest_int("leaf_size", 1, 100, step=1),
-            # "p": lambda t: t.suggest_int("p", 1, 5, step=1),
+            "leaf_size": lambda t: t.suggest_int("leaf_size", 1, 100, step=1)
         }
         static_params = {
             "n_jobs": -1,
