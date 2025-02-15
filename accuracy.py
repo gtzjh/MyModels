@@ -8,7 +8,7 @@ import yaml, pathlib, json
 plt.rc('font', family = 'Times New Roman')
 
 
-def _plot(_r2_value, _rmse_value, _mae_value, _y, _y_pred, _results_dir):
+def _regr_accuracy_plot(_r2_value, _rmse_value, _mae_value, _y, _y_pred, _results_dir):
     plt.figure(figsize = (8, 8), dpi = 500)
     plt.scatter(_y, _y_pred, color = '#4682B4', alpha = 0.4, s = 150)
     
@@ -50,7 +50,7 @@ def _plot(_r2_value, _rmse_value, _mae_value, _y, _y_pred, _results_dir):
 
 
 # 输出精度结果
-def accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, results_dir):
+def RegrAccuracy(y_test, y_test_pred, y_train, y_train_pred, results_dir):
     ###########################################################################
     # Check variables' type
     assert isinstance(y_test, pd.DataFrame) or isinstance(y_test, pd.Series) or isinstance(y_test, np.ndarray)
@@ -87,7 +87,7 @@ def accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, results_dir):
 
     ###########################################################################
     # Plot
-    _plot(
+    _regr_accuracy_plot(
         accuracy_dict["test_r2"],
         accuracy_dict["test_rmse"],
         accuracy_dict["test_mae"],
@@ -102,7 +102,7 @@ def accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, results_dir):
 if __name__ == "__main__":
     scatter_test = pd.read_csv("results/rf/scatter_test.csv", encoding = "utf-8")
     scatter_train = pd.read_csv("results/rf/scatter_train.csv", encoding = "utf-8")
-    accuracy_regrs(
+    RegrAccuracy(
         y_test = scatter_test["y_test"],
         y_test_pred = scatter_test["y_test_pred"],
         y_train = scatter_train["y_train"],

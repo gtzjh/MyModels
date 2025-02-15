@@ -1,5 +1,6 @@
 import numpy as np
 import optuna
+from optuna.samplers import TPESampler
 from sklearn.svm import SVR
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neural_network import MLPRegressor
@@ -10,8 +11,7 @@ from lightgbm import LGBMRegressor
 from catboost import CatBoostRegressor
 from sklearn.model_selection import cross_val_score, KFold
 import yaml, pathlib
-from accuracy_regrs import accuracy_regrs
-from optuna.samplers import TPESampler
+from accuracy import RegrAccuracy
 
 
 """A class for training and optimizing various regression models."""
@@ -99,7 +99,7 @@ class Regr:
         # Evaluate and save results
         y_test_pred = opt_model.predict(x_test)    # Accuracy on testing set
         y_train_pred = opt_model.predict(x_train)  # Accuracy on training set
-        accuracy_regrs(y_test, y_test_pred, y_train, y_train_pred, self.results_dir)
+        RegrAccuracy(y_test, y_test_pred, y_train, y_train_pred, self.results_dir)
         
         return None
     ###########################################################################
@@ -172,7 +172,7 @@ class Regr:
             # "p": lambda t: t.suggest_int("p", 1, 5, step=1),
         }
         static_params = {
-            # "n_jobs": -1,  # Error occured in SHAP explaination when `n_jobs=-1`.
+            "n_jobs": -1,
         }
         return self._optimizer(KNeighborsRegressor, param_space, static_params)
     ###########################################################################

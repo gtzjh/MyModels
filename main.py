@@ -27,9 +27,9 @@ class MLPipeline:
         self.cross_valid = cross_valid
         self.random_state = random_state
         self._validate_inputs()
-        
+    
+    """Validate input parameters"""
     def _validate_inputs(self):
-        """Validate input parameters"""
         assert isinstance(self.file_path, (str, pathlib.Path)), \
             "`file_path` must be string or Path object"
         assert isinstance(self.y, (str, int)), \
@@ -54,8 +54,8 @@ class MLPipeline:
         assert isinstance(self.random_state, int), \
             "`random_state` must be an integer"
         
+    """Prepare training and test data"""
     def load_data(self):
-        """Prepare training and test data"""
         self.x_train, self.x_test, self.y_train, self.y_test = dataLoader(
             file_path=self.file_path,
             y=self.y,
@@ -64,9 +64,9 @@ class MLPipeline:
             test_ratio=self.test_ratio,
             random_state=self.random_state
         )
-        
+
+    """Optimize and evaluate the model"""
     def optimize(self):
-        """Train and evaluate the model"""
         optimizer = Regr(
             cv=self.cross_valid,
             random_state=self.random_state,
@@ -78,20 +78,21 @@ class MLPipeline:
         optimizer.evaluate(self.optimal_model, self.x_test, self.y_test, 
                            self.x_train, self.y_train)
         
+    """Use SHAP for explanation"""
     def explain(self):
-        """Use SHAP for explanation"""
         np.random.seed(self.random_state)
         all_data = pd.concat([self.x_train, self.x_test])
+        shuffled_indices = np.random.permutation(all_data.index)
         shap_data = all_data.loc[
             np.random.choice(
-                all_data.index,
+                shuffled_indices,
                 int(len(all_data) * self.shap_ratio),
                 replace=False
             )]
         myshap(self.optimal_model, self.model, shap_data, self.results_dir)
         
+    """Execute the full pipeline"""
     def run(self):
-        """Execute the full pipeline"""
         self.load_data()
         self.optimize()
         self.explain()
@@ -100,7 +101,8 @@ class MLPipeline:
 
 if __name__ == "__main__":
     for i in [
-        "svr", "knr", "mlp", "dt", "rf", "gbdt", "xgb", "lgb", "cat", "ada",
+        "svr", "knr", "mlp", "ada", # The use kernel explaination in SHAP, which will be very slow in the case of large dataset.
+        "dt", "rf", "gbdt", "xgb", "lgb", "cat",  # Tree-based explaination in SHAP, which will be faster.
     ]:
         print(f"{i} started")
         the_model = MLPipeline(
@@ -112,7 +114,7 @@ if __name__ == "__main__":
             cat_features = None,
             trials = 100,
             test_ratio = 0.3,
-            shap_ratio = 0.01,
+            shap_ratio = 0.2,
             cross_valid = 5,
             random_state = 0,
         )

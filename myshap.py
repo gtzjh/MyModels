@@ -1,5 +1,7 @@
 import pandas as pd
 import shap
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pathlib
 
@@ -89,6 +91,10 @@ def myshap(model, model_type, shap_data, results_dir):
         plt.savefig(results_dir.joinpath("dependence_plots")\
                     .joinpath(_feature_name + '.jpg'), dpi = 500)
         plt.close()
+
+    # Clean up all matplotlib figures and cache
+    plt.close('all')
+    plt.clf()
 
     # There is no scatter plot here.
     return None
