@@ -2,13 +2,6 @@
 
 [中文版本](#中文使用说明)
 
-# On-going
-
-- Added support for categorical variables
-- Added support for model interpretation
-- Added support for classification tasks
-
-
 # English Documentation
 
 **Machine learning pipeline with automated hyperparameter tuning using Optuna and model interpretation with SHAP (SHapley Additive exPlanations).**
@@ -19,16 +12,16 @@
 
 Supported Models with Hyperparameter Optimization:
 
-1. [Support Vector Regression (SVR)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
-2. [K-Nearest Neighbors Regression (KNR)](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html)
-3. [Multi-Layer Perceptron (MLP)](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html)
-4. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
-5. [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
-6. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
-7. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
-8. [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-9. [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
-10. [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
+- [Support Vector Regression (SVR)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
+- [K-Nearest Neighbors Regression (KNR)](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html)
+- [Multi-Layer Perceptron (MLP)](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html)
+- [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
+- [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
+- [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+- [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
+- [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
+- [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
+- [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
 
 ## 0. Prerequisites
@@ -59,10 +52,12 @@ conda activate mymodels
 
 Configure parameters in `main.py`:
 
+Build an instance of the pipeline:
+
 ```python
-main(
+the_model = MLPipeline(
     file_path = "data.csv",
-    y = "y",
+    y = "y", 
     x_list = list(range(1, 16)),
     model = "cat",
     results_dir = "results/cat",
@@ -72,8 +67,24 @@ main(
     shap_ratio = 0.3,
     cross_valid = 5,
     random_state = 0
-)   
+)
 ```
+
+Run the pipeline directly:
+
+```python
+the_model.run()
+```
+
+Or run the pipeline step by step:
+
+```python
+the_model.load_data()  # Load data
+the_model.optimize()   # Optimize model
+the_model.explain()    # Explain model
+```
+
+Description of parameters:
 
 | Parameter | Description |
 |-----------|-------------|
@@ -105,16 +116,16 @@ python main.py
 
 本项目包含的模型：
 
-1. [Support Vector Regression (SVR)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
-2. [K-Nearest Neighbors Regression (KNR)](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html)
-3. [Multi-Layer Perceptron (MLP)](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html)
-4. [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
-5. [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
-6. [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
-7. [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
-8. [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
-9. [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
-10. [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
+- [Support Vector Regression (SVR)](https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html)
+- [K-Nearest Neighbors Regression (KNR)](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html)
+- [Multi-Layer Perceptron (MLP)](https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html)
+- [Decision Tree](https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html)
+- [Random Forest](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html)
+- [Gradient Boosted Decision Trees (GBDT)](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html)
+- [AdaBoost](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html)
+- [XGBoost](https://xgboost.readthedocs.io/en/latest/python/python_api.html)
+- [LightGBM](https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html)
+- [CatBoost](https://catboost.ai/en/docs/concepts/python-reference_catboostregressor)
 
 
 ## 0. 前置知识
@@ -152,14 +163,16 @@ conda activate mymodels
 
 根据自己需要修改 `main.py` 中的以下内容：
 
+构建模型实例：
+
 ```python
-main(
+the_model = MLPipeline(
     file_path = "data.csv",
-    y = "y",
+    y = "y", 
     x_list = list(range(1, 16)),
-    model = "svr",
-    results_dir = "results/svr",
-    cat_features = None,
+    model = "cat",
+    results_dir = "results/cat",
+    cat_features = ["x16", "x17"],
     trials = 50,
     test_ratio = 0.3,
     shap_ratio = 0.3,
@@ -167,6 +180,21 @@ main(
     random_state = 0
 )
 ```
+
+运行模型：
+```python
+the_model.run()
+```
+
+或逐步运行：
+
+```python
+the_model.load_data()  # 加载数据
+the_model.optimize()   # 优化模型
+the_model.explain()    # 解释模型
+```
+
+参数说明：
 
 | 参数 | 说明 |
 |------|------|

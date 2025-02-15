@@ -7,29 +7,7 @@ shap.initjs()
 plt.rc('font', family = 'Times New Roman')
 
 
-
-def myshap(best_model, model_type, shap_data, results_dir):
-    assert isinstance(shap_data, pd.DataFrame)
-    assert isinstance(results_dir, pathlib.Path) or isinstance(results_dir, str)
-    results_dir = pathlib.Path(results_dir)
-    results_dir.mkdir(parents = True, exist_ok = True)
-
-    # Set different explainers for different models
-    if model_type in ["ada"]:
-        # For KernelExplainer, need to pass prediction function and data
-        explainer = shap.KernelExplainer(best_model.predict, shap_data)
-        shap_values = explainer.shap_values(shap_data)
-    else:
-        # For TreeExplainer
-        explainer = shap.TreeExplainer(best_model)
-        shap_values = explainer.shap_values(shap_data)
-
-    # Summary plot
-    shap.summary_plot(shap_values, shap_data, show = False)
-    plt.tight_layout()
-    plt.savefig(results_dir.joinpath('shap_summary.jpg'), dpi = 500)
-    plt.close()
-
+def myshap(model, model_type, shap_data, results_dir):
     """
     SHAP Visualization Functions Comparison:
     
@@ -57,13 +35,35 @@ def myshap(best_model, model_type, shap_data, results_dir):
     
     Recommendation: Use dependence_plot for most cases, scatter_plot for custom combinations
     """
+    # Check input
+    assert isinstance(shap_data, pd.DataFrame)
+    assert isinstance(results_dir, pathlib.Path) or isinstance(results_dir, str)
+    results_dir = pathlib.Path(results_dir)
+    results_dir.mkdir(parents = True, exist_ok = True)
+
+    # Set different explainers for different models
+    if model_type in ["svr", "knr", "mlp", "ada"]:
+        # For KernelExplainer, need to pass prediction function and data
+        explainer = shap.KernelExplainer(model.predict, shap_data)
+        shap_values = explainer.shap_values(shap_data)
+    else:
+        # For TreeExplainer
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(shap_data)
+
+    # Summary plot
+    shap.summary_plot(shap_values, shap_data, show = False)
+    plt.tight_layout()
+    plt.savefig(results_dir.joinpath('shap_summary.jpg'), dpi = 500)
+    plt.close()
 
     # Partial Dependency Plot
-    results_dir.joinpath("partial_dependence_plots").mkdir(parents = True, exist_ok = True)
+    results_dir.joinpath("partial_dependence_plots") \
+               .mkdir(parents = True, exist_ok = True)
     for _feature_name in shap_data.columns:
         shap.partial_dependence_plot(
             _feature_name,
-            best_model.predict,
+            model.predict,
             shap_data,
             model_expected_value = True,
             feature_expected_value = True,
@@ -71,11 +71,13 @@ def myshap(best_model, model_type, shap_data, results_dir):
             show = False
         )
         plt.tight_layout()
-        plt.savefig(results_dir.joinpath("partial_dependence_plots").joinpath(_feature_name + '.jpg'), dpi = 500)
+        plt.savefig(results_dir.joinpath("partial_dependence_plots")\
+                    .joinpath(_feature_name + '.jpg'), dpi = 500)
         plt.close()
     
     # Dependence Plot
-    results_dir.joinpath("dependence_plots").mkdir(parents = True, exist_ok = True)
+    results_dir.joinpath("dependence_plots") \
+               .mkdir(parents = True, exist_ok = True)
     for _feature_name in shap_data.columns:
         shap.dependence_plot(
             _feature_name,
@@ -84,7 +86,8 @@ def myshap(best_model, model_type, shap_data, results_dir):
             show = False
         )
         plt.tight_layout()
-        plt.savefig(results_dir.joinpath("dependence_plots").joinpath(_feature_name + '.jpg'), dpi = 500)
+        plt.savefig(results_dir.joinpath("dependence_plots")\
+                    .joinpath(_feature_name + '.jpg'), dpi = 500)
         plt.close()
 
     # There is no scatter plot here.

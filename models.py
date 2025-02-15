@@ -25,12 +25,6 @@ class Regr:
             trials (int): Number of trials to execute in optuna optimization
             results_dir (str or pathlib.Path): Directory path to store the optimization results
         """
-        assert isinstance(cv, int) and cv > 0, \
-            "`cv` must be a positive integer"
-        assert isinstance(trials, int) and trials > 0, \
-            "`trials` must be a positive integer"
-        assert isinstance(results_dir, (str, pathlib.Path)), \
-            "`results_dir` must be string or Path object"
         
         self.cv = cv
         self.random_state = random_state
@@ -175,10 +169,10 @@ class Regr:
             "n_neighbors": lambda t: t.suggest_int("n_neighbors", 1, 100, step=1),
             "weights": lambda t: t.suggest_categorical("weights", ["uniform", "distance"]),
             "leaf_size": lambda t: t.suggest_int("leaf_size", 1, 100, step=1),
-            "p": lambda t: t.suggest_int("p", 1, 5, step=1),
+            # "p": lambda t: t.suggest_int("p", 1, 5, step=1),
         }
         static_params = {
-            "n_jobs": -1,
+            # "n_jobs": -1,  # Error occured in SHAP explaination when `n_jobs=-1`.
         }
         return self._optimizer(KNeighborsRegressor, param_space, static_params)
     ###########################################################################
@@ -195,7 +189,7 @@ class Regr:
             "max_iter": lambda t: t.suggest_int("max_iter", 100, 3000, step = 100),
         }
         static_params = {
-            "hidden_layer_sizes": (100, 100, 100),
+            "hidden_layer_sizes": (200, 200, 200),
             "activation": "relu",
             "solver": "adam",
             "batch_size": "auto",

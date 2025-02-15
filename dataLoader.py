@@ -23,12 +23,6 @@ def dataLoader(file_path, y, x_list, cat_features, test_ratio, random_state) \
             - y_train: Training target Series
             - y_test: Testing target Series
     """
-    assert isinstance(file_path, (str, pathlib.Path)), \
-        "`file_path` must be string or Path object"
-    assert isinstance(test_ratio, float) and 0.0 < test_ratio < 1.0, \
-        "`test_ratio` must be a float between 0 and 1"
-    assert isinstance(random_state, int), \
-        "`random_state` must be an integer"
 
     _df = pd.read_csv(file_path, encoding = "utf-8", na_values = np.nan)
 
@@ -69,9 +63,6 @@ def dataLoader(file_path, y, x_list, cat_features, test_ratio, random_state) \
     If x_list contains integers, select columns using integer indices.
     Then verify that all non-categorical columns are numeric.
     """
-    assert (isinstance(x_list, list) and len(x_list) > 0) \
-        and all(isinstance(x, (str, int)) for x in x_list), \
-        "`x_list` must be non-empty list of strings or integers"
     if all([isinstance(i, str) for i in x_list]):
         x_data = _df.loc[:, x_list]
     elif all([isinstance(i, int) for i in x_list]):
