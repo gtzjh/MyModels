@@ -16,8 +16,6 @@ from optuna.samplers import TPESampler
 
 """A class for training and optimizing various regression models."""
 class Regr:
-    """A class for training and optimizing various regression models."""
-    
     def __init__(self, cv: int, random_state: int, trials: int, results_dir: str | pathlib.Path):
         """
         Initialize the Regr class.
@@ -93,7 +91,6 @@ class Regr:
         return opt_model
     ###########################################################################
 
-
     ###########################################################################
     def evaluate(self, opt_model, x_test, y_test, x_train, y_train) -> None:
         """
@@ -112,7 +109,6 @@ class Regr:
         
         return None
     ###########################################################################
-
 
     ###########################################################################
     def _optimizer(self, _model, _param_space, _static_params = None) -> tuple[optuna.Study, None|dict]:
@@ -153,11 +149,14 @@ class Regr:
 
 
     ###########################################################################
-    """Optimize Support Vector Regression model."""
+    """
+    Support Vector Regression regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVR.html
+    """
     def _SVR(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "kernel": lambda t: t.suggest_categorical("kernel", ["linear", "rbf", "poly", "sigmoid"]),
-            "C": lambda t: t.suggest_float("C", 0.1, 100, log=True),
+            "C": lambda t: t.suggest_float("C", 0.01, 100, log=True),
             "epsilon": lambda t: t.suggest_float("epsilon", 0.01, 1.0, step=0.01),
         }
         static_params = {
@@ -167,7 +166,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize K-Nearest Neighbors Regression model."""
+    """
+    K-Nearest Neighbors regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsRegressor.html
+    """
     def _KNR(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "n_neighbors": lambda t: t.suggest_int("n_neighbors", 1, 100, step=1),
@@ -182,7 +184,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize Multi-Layer Perceptron Regression model."""
+    """
+    Multi-Layer Perceptron regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPRegressor.html
+    """
     def _MLP(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "alpha": lambda t: t.suggest_float("alpha", 0.0001, 0.1, log=True),
@@ -201,7 +206,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize Decision Tree model."""
+    """
+    Decision Tree regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html
+    """
     def _DT(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 2, 20),
@@ -213,9 +221,11 @@ class Regr:
         return self._optimizer(DecisionTreeRegressor, param_space, static_params)
     ###########################################################################
 
-
     ###########################################################################
-    """Optimize Random Forest model."""
+    """
+    Random Forest regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
+    """
     def _RF(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "n_estimators": lambda t: t.suggest_int("n_estimators", 100, 3000, step=100),
@@ -232,7 +242,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize Gradient Boosting model."""
+    """
+    Gradient Boosting regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingRegressor.html
+    """
     def _GBDT(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "learning_rate": lambda t: t.suggest_float("learning_rate", 1e-8, 1.0, log=True),
@@ -251,7 +264,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize AdaBoost model."""
+    """
+    AdaBoost regressor
+    https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.AdaBoostRegressor.html
+    """
     def _ADA(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "n_estimators": lambda t: t.suggest_int("n_estimators", 100, 3000, step=100),
@@ -265,7 +281,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize XGBoost model."""
+    """
+    XGBoost regressor
+    https://xgboost.readthedocs.io/en/latest/python/python_api.html
+    """
     def _XGB(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 1, 15),
@@ -288,7 +307,10 @@ class Regr:
     ###########################################################################
 
     ###########################################################################
-    """Optimize LightGBM model."""
+    """
+    LightGBM regressor
+    https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html
+    """
     def _LGB(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "max_depth": lambda t: t.suggest_int("max_depth", 1, 15),
@@ -307,9 +329,13 @@ class Regr:
             "n_jobs": -1,
         }
         return self._optimizer(LGBMRegressor, param_space, static_params)
+    ###########################################################################
 
     ###########################################################################
-    """Optimize CatBoost model."""
+    """
+    CatBoost regression
+    https://catboost.ai/en/docs/concepts/python-reference_catboostregressor
+    """
     def _CAT(self) -> tuple[optuna.Study, dict]:
         param_space = {
             "iterations": lambda t: t.suggest_int("iterations", 100, 3000, step=100),

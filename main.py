@@ -64,7 +64,8 @@ if __name__ == "__main__":
     
     for i in [
         # "dt", "rf", "gbdt", "xgb", "lgb", "cat", "ada",
-        "svr", "knr", "mlp",
+        # "svr", 
+        "knr", "mlp",
     ]:
         print(f"{i} started")
         main(
@@ -74,7 +75,7 @@ if __name__ == "__main__":
             model = i,
             results_dir = "results/" + i,
             # cat_features = ["x16", "x17"],
-            trials = 50,
+            trials = 200,
             test_ratio = 0.3,
             shap_ratio = 0.3,
             cross_valid = 5,
