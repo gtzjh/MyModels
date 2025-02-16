@@ -16,7 +16,7 @@ class MLPipeline:
                  cat_features=None, trials=50, test_ratio=0.3,
                  shap_ratio=0.3, cross_valid=5, random_state=0):
         self.file_path = file_path
-        self.y = y 
+        self.y = y
         self.x_list = x_list
         self.model = model
         self.results_dir = results_dir
@@ -119,9 +119,9 @@ if __name__ == "__main__":
                 model = i,
                 results_dir = "results/" + i,
                 cat_features = None,
-                trials = 100,
+                trials = 200,
                 test_ratio = 0.3,
-                shap_ratio = 0.2,
+                shap_ratio = 0.3,
                 cross_valid = 5,
                 random_state = 0,
             )
