@@ -119,7 +119,7 @@ if __name__ == "__main__":
                 model = i,
                 results_dir = "results/" + i,
                 cat_features = None,
-                trials = 200,
+                trials = 500,
                 test_ratio = 0.3,
                 shap_ratio = 0.3,
                 cross_valid = 5,
