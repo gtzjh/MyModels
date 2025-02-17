@@ -44,7 +44,7 @@ Supported Models with Hyperparameter Optimization:
 
 Using Conda:
 ```bash
-conda env create -f env-win.yml -n mymodels
+conda env create -f requirement.yml -n mymodels
 conda activate mymodels
 ```
 
@@ -152,10 +152,7 @@ python main.py
 conda
 
 ```bash
-conda env create -f env-win.yml -n mymodels
-```
-
-```bash
+conda env create -f requirement.yml -n mymodels
 conda activate mymodels
 ```
 
