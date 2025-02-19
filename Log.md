@@ -1,5 +1,17 @@
 # Log
 
+## 20250218
+
+- Implemented the encoder module to encode categorical features.
+- Supported encoding methods: OneHot, Label, Target, Frequency, Binary, Ordinal.
+- Added functionality to fit and transform data using the specified encoding method.
+- Included validation to ensure the encoding process does not introduce null values or change the number of rows.
+- Provided a method to retrieve the mapping relationships for each encoding method.
+- Added a utility to convert numpy types to native Python types for JSON serialization.
+- Implemented saving and loading of the encoder using joblib.
+- Ensured compatibility with large datasets by issuing warnings for potential high memory usage.
+- Added comprehensive error handling and validation checks for input data.
+
 ## 20250214
 
 Fixed the bug of the reproducible optimization process.

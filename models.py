@@ -129,6 +129,7 @@ class Regr:
                 **{k: v(trial) for k, v in _param_space.items()},
                 **_static_params,
             }
+            """注意，如果有类别变量，则在交叉验证阶段，每一折都应当构建独立的encoder。"""
             cv_r2 = cross_val_score(
                 _model(**param),
                 self.x_train, self.y_train,
