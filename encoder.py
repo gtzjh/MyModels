@@ -125,12 +125,17 @@ class Encoder:
             
         return df
 
-    def save(self, path='encoding/encoder.pkl'):
+    def save(self, path=None):
         """Save the encoder"""
+        # Set default path using method name if not provided
+        if path is None:
+            path = os.path.join('encoding', f'{self.method}_encoder.pkl')
+            
         if os.path.exists(path):
             import warnings
             warnings.warn(f"File {path} already exists and will be overwritten")
         
+        # Ensure the target directory exists (including the encoding directory)
         os.makedirs(os.path.dirname(path), exist_ok=True)
         
         try:
@@ -275,6 +280,9 @@ if __name__ == "__main__":
         
         # Fit data
         encoder.fit(df, cat_cols)
+
+        # Save encoder
+        encoder.save()
         
         # Get mapping relationships
         mapping = encoder.get_mapping(df, cat_cols)
@@ -286,8 +294,6 @@ if __name__ == "__main__":
         json_path = f'encoding/{method}_mapping.json'
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(mapping, f, ensure_ascii=False, indent=4)
-        
-        print(f"Saved {method} encoding mapping to {json_path}")
     
     # Handle target encoding separately as it requires target column
     if 'target' in df.columns:  # Assuming target column name is 'target'
