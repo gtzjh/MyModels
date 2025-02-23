@@ -17,13 +17,12 @@ import json
 import numpy as np
 
 
-class Encoder:
+class Encoder():
     def __init__(self, method='onehot', target_col=None):
         """
-        :param method: Encoding method ['onehot','label','target','frequency','binary','ordinal']
-        :param target_col: Target column name required for target encoding
+        param method: Encoding method ['onehot','label','target','frequency','binary','ordinal']
+        param target_col: Target column name required for target encoding
         """
-        self.version = '1.0.0'
         self.VALID_METHODS = ['onehot', 'label', 'target', 'frequency', 'binary', 'ordinal']
         
         if method not in self.VALID_METHODS:
@@ -36,94 +35,146 @@ class Encoder:
         self.encoder = None
         self.feature_names = None
 
-    def fit(self, df, cat_cols):
-        """Fit the encoder"""
-        if not isinstance(df, pd.DataFrame):
-            raise TypeError("df must be a pandas DataFrame")
+    def fit(self, X, cat_cols: list[str]|tuple[str], y=None):
+        """
+        Fit the encoder
+        
+        Parameters:
+            X: DataFrame to fit
+            y: Target values (used for target encoding)
+            cat_cols: Category columns to encode
+        Returns:
+            self
+        """
+        # Validate input types
+        if not isinstance(X, pd.DataFrame):
+            raise TypeError("X must be a pandas DataFrame")
         if not isinstance(cat_cols, (list, tuple)):
             raise TypeError("cat_cols must be a list or tuple")
-        
-        if df[cat_cols].isnull().any().any():
+        if X[cat_cols].isnull().any().any():
             raise ValueError("Input contains null values. Please handle missing values before encoding.")
-
         if not cat_cols:
             raise ValueError("cat_cols cannot be empty")
-        missing_cols = [col for col in cat_cols if col not in df]
+        missing_cols = [col for col in cat_cols if col not in X]
         if missing_cols:
             raise KeyError(f"Columns {missing_cols} not found in dataframe")
+        # Validate y type for target encoding
+        if self.method == 'target':
+            if not isinstance(y, (np.ndarray, pd.Series, pd.DataFrame)):
+                raise TypeError("y must be a numpy ndarray, pandas Series, or pandas DataFrame")
+            # Get length of y accounting for different types
+            y_length = len(y) if isinstance(y, (pd.Series, pd.DataFrame)) else y.shape[0]
+            if y_length != len(X):
+                raise ValueError(f"Length of y ({y_length}) does not match length of X ({len(X)})")
+
+        # Store cat_cols for later use in transform
+        self.cat_cols_ = cat_cols
 
         if self.method == 'onehot':
             self.encoder = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
-            self.encoder.fit(df[cat_cols])
+            self.encoder.fit(X[cat_cols])
             
         elif self.method == 'label':
             self.encoder = {col: LabelEncoder() for col in cat_cols}
             for col in cat_cols:
-                self.encoder[col].fit(df[col])
+                self.encoder[col].fit(X[col])
                 
         elif self.method == 'target':
-            if self.target_col not in df.columns:
-                raise KeyError(f"Target column {self.target_col} not found in dataframe")
             self.encoder = ce.TargetEncoder(cols=cat_cols)
-            self.encoder.fit(df[cat_cols], df[self.target_col])
+            self.encoder.fit(X[cat_cols], y)
             
         elif self.method == 'frequency':
-            self.encoder = {col: df[col].value_counts(normalize=True).to_dict() 
+            self.encoder = {col: X[col].value_counts(normalize=True).to_dict() 
                           for col in cat_cols}
             
         elif self.method == 'binary':
             self.encoder = ce.BinaryEncoder(cols=cat_cols)
-            self.encoder.fit(df[cat_cols])
+            self.encoder.fit(X[cat_cols])
             
         elif self.method == 'ordinal':
             self.encoder = ce.OrdinalEncoder(cols=cat_cols)
-            self.encoder.fit(df[cat_cols])
+            self.encoder.fit(X[cat_cols])
             
         return self
 
-    def transform(self, df, cat_cols):
-        """Apply encoding"""
+    def transform(self, X):
+        """
+        Apply encoding
+        Parameters:
+            X: DataFrame to transform
+        Returns:
+            Transformed DataFrame
+        """
         if self.encoder is None:
             raise RuntimeError("Encoder not fitted. Call fit() first")
+        
+        if not hasattr(self, 'cat_cols_'):
+            raise RuntimeError("cat_cols not found. Encoder may not be properly fitted.")
 
-        missing_cols = [col for col in cat_cols if col not in df]
+        cat_cols = self.cat_cols_
+        missing_cols = [col for col in cat_cols if col not in X]
         if missing_cols:
             raise KeyError(f"Columns {missing_cols} not found in dataframe")
 
-        df = df.copy()
-        
-        if len(df) * len(cat_cols) > 1e7:  # Adjust threshold based on actual needs
-            import warnings
-            warnings.warn("Large dataset detected. This operation may consume significant memory.")
+        X = X.copy()
         
         if self.method == 'onehot':
-            encoded = self.encoder.transform(df[cat_cols])
+            encoded = self.encoder.transform(X[cat_cols])
             encoded_df = pd.DataFrame(encoded,
                                     columns=self.encoder.get_feature_names_out(cat_cols),
-                                    index=df.index)
-            df = pd.concat([df.drop(cat_cols, axis=1), encoded_df], axis=1)
+                                    index=X.index)
+            return pd.concat([X.drop(cat_cols, axis=1), encoded_df], axis=1)
             
         elif self.method == 'label':
             for col in cat_cols:
-                df[col] = self.encoder[col].transform(df[col])
+                X[col] = self.encoder[col].transform(X[col])
+            return X
                 
         elif self.method == 'target':
-            df[cat_cols] = self.encoder.transform(df[cat_cols])
+            X[cat_cols] = self.encoder.transform(X[cat_cols])
+            return X
             
         elif self.method == 'frequency':
             for col in cat_cols:
-                df[col+'_freq'] = df[col].map(self.encoder[col]).fillna(0)
-            df = df.drop(cat_cols, axis=1)
+                frequency_map = self.encoder[col]  # Get frequency mapping dictionary for current category column
+                
+                # If the column is Categorical, first convert to string type
+                if pd.api.types.is_categorical_dtype(X[col]):
+                    current_col = X[col].astype(str)
+                else:
+                    current_col = X[col]
+                
+                # Map category values to corresponding frequencies
+                mapped_frequencies = current_col.map(frequency_map)
+                
+                # Handle unknown categories by filling NaN with 0
+                mapped_frequencies_filled = mapped_frequencies.fillna(0)
+                
+                # Create a new frequency encoding column
+                new_col_name = col + '_freq'
+                X[new_col_name] = mapped_frequencies_filled
+            
+            return X.drop(cat_cols, axis=1)
         
         elif self.method == 'binary':
-            binary_cols = self.encoder.transform(df[cat_cols])
-            # Delete the original columns, and concatenate the new binary columns
-            df = pd.concat([df.drop(cat_cols, axis=1), binary_cols], axis=1)
+            binary_cols = self.encoder.transform(X[cat_cols])
+            return pd.concat([X.drop(cat_cols, axis=1), binary_cols], axis=1)
             
-        elif self.method in ['ordinal']:
-            df[cat_cols] = self.encoder.transform(df[cat_cols])
-            
-        return df
+        elif self.method == 'ordinal':
+            X[cat_cols] = self.encoder.transform(X[cat_cols])
+            return X
+
+    def fit_transform(self, X, cat_cols: list[str], y=None):
+        """
+        Fit encoder and return transformed data
+        Parameters:
+            X: DataFrame to fit and transform
+            y: Target values (used for target encoding)
+            cat_cols: Category columns to encode
+        Returns:
+            Transformed DataFrame
+        """
+        return self.fit(X, cat_cols, y).transform(X)
 
     def save(self, path=None):
         """Save the encoder"""
@@ -275,20 +326,11 @@ if __name__ == "__main__":
     methods = ['onehot', 'label', 'frequency', 'binary', 'ordinal']
     
     for method in methods:
-        # Initialize encoder
-        encoder = Encoder(method=method)
-        
-        # Fit data
-        encoder.fit(df, cat_cols)
-
-        # Save encoder
-        encoder.save()
-        
-        # Get mapping relationships
-        mapping = encoder.get_mapping(df, cat_cols)
-        
-        # Convert numpy types to native Python types
-        mapping = encoder.convert_numpy_types(mapping)
+        encoder = Encoder(method=method)  # Initialize encoder
+        encoder.fit(df, cat_cols=cat_cols)  # Fit data
+        encoder.save()  # Save encoder
+        mapping = encoder.get_mapping(df, cat_cols)  # Get mapping relationships
+        mapping = encoder.convert_numpy_types(mapping)  # Convert numpy types to native Python types
         
         # Save to JSON file
         json_path = f'encoding/{method}_mapping.json'
@@ -298,7 +340,7 @@ if __name__ == "__main__":
     # Handle target encoding separately as it requires target column
     if 'target' in df.columns:  # Assuming target column name is 'target'
         encoder = Encoder(method='target', target_col='target')
-        encoder.fit(df, cat_cols)
+        encoder.fit(df, y=df['target'], cat_cols=cat_cols)
         mapping = encoder.get_mapping(df, cat_cols)
         
         # Convert numpy types to native Python types
