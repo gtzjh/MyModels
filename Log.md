@@ -1,12 +1,8 @@
 # Log
 
-## 20250223
+## 20250224
 
-Completed support for categorical variables in all models except CatBoost.
-
-Next step is to implement compatibility with CatBoost.
-
-As well as the SHAP explanation with the encoded categorical features.
+Completed support for categorical variables in all models except for SHAP explanation.
 
 ## 20250218
 

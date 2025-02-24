@@ -6,6 +6,7 @@ from models import Regr
 import pathlib
 
 
+
 """
 Machine Learning Pipeline for Model Training and Evaluation
 A class that handles data loading, model training, and evaluation with SHAP analysis.
@@ -29,6 +30,7 @@ class MLPipeline:
         self.random_state = random_state
         self._validate_inputs()
     
+
     def _validate_inputs(self):
         """Validate input parameters"""
         assert isinstance(self.file_path, (str, pathlib.Path)), \
@@ -62,6 +64,7 @@ class MLPipeline:
         assert isinstance(self.random_state, int), \
             "`random_state` must be an integer"
         
+
     def load_data(self):
         """Prepare training and test data"""
         self.x_train, self.x_test, self.y_train, self.y_test = dataLoader(
@@ -72,28 +75,27 @@ class MLPipeline:
             test_ratio=self.test_ratio,
             random_state=self.random_state
         )
+        return None
+
 
     def optimize(self):
         """Optimize and evaluate the model"""
-        try:
-            optimizer = Regr(
-                cv=self.cross_valid,
-                random_state=self.random_state,
-                trials=self.trials,
-                results_dir=self.results_dir,
-            )
-            self.optimal_model = optimizer.fit(self.x_train, self.y_train, 
-                                               self.model,
-                                               self.cat_features, self.encoder_method)
-            optimizer.evaluate(self.optimal_model,
-                               self.x_test, self.y_test)
-        except Exception as e:
-            with open("error.txt", "w") as f:
-                f.write(f"Model type: {self.model}\n")
-                f.write(f"Time: {pd.Timestamp.now()}\n")
-                f.write(f"Error: Model optimization failed: {str(e)}\n")
-            raise RuntimeError(f"Model optimization failed: {str(e)}")
-        
+        optimizer = Regr(cv=self.cross_valid,
+                         random_state=self.random_state,
+                         trials=self.trials,
+                         results_dir=self.results_dir)
+        # Optimize the model, and train an optimal model on the whole training dataset in the end
+        self.optimal_model = optimizer.fit(self.x_train, self.y_train, 
+                                           self.model,
+                                           self.cat_features, self.encoder_method)
+        # Evaluate the model
+        optimizer.evaluate(self.optimal_model,
+                           self.x_test, self.y_test)
+        # Output the optimal parameters
+        optimizer.output_opt_params(optimizer.opt_params)
+        return None
+
+
     def explain(self):
         """Use SHAP for explanation"""
         np.random.seed(self.random_state)
@@ -106,7 +108,9 @@ class MLPipeline:
                 replace=False
             )]
         myshap(self.optimal_model, self.model, shap_data, self.results_dir)
+        return None
         
+
     def run(self):
         """Execute the whole pipeline"""
         self.load_data()
@@ -115,11 +119,12 @@ class MLPipeline:
         return None
 
 
+
 if __name__ == "__main__":
     for i in [
         # "svr", "knr", "mlp", "ada", "dt", "gbdt", "xgb", "lgb", 
-        "rf",
-        # "cat",
+        # "rf",
+        "cat",
     ]:
         the_model = MLPipeline(
             file_path = "data.csv",
@@ -129,7 +134,7 @@ if __name__ == "__main__":
             results_dir = "results/" + i,
             cat_features = ['x16', 'x17'],
             encoder_method = 'frequency',
-            trials = 10,
+            trials = 100,
             test_ratio = 0.3,
             shap_ratio = 0.3,
             cross_valid = 5,
